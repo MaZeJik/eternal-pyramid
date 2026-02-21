@@ -1,1 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>The Eternal Pyramid</title>
+    <style>
+        body { margin: 0; background-color: black; color: gold; font-family: 'Courier New', monospace; text-align: center; overflow: hidden; }
+        #ui { position: absolute; top: 10%; width: 100%; z-index: 10; }
+        button { background: gold; color: black; padding: 15px 30px; border: none; font-weight: bold; cursor: pointer; border-radius: 5px; margin-top: 20px; }
+        #stats { position: absolute; bottom: 20px; left: 20px; color: #0f0; }
+    </style>
+</head>
+<body>
+    <div id="ui">
+        <h1>THE ETERNAL PYRAMID</h1>
+        <p>Adını Sonsuzluğa Kazı - 1 USD</p>
+        <button onclick="alert('Cüzdan Sistemi Yakında!')">TUĞLA SATIN AL</button>
+    </div>
+    <div id="stats">CANLI BAĞIŞ: $1,876,420</div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Piramit Gövdesi
+        const geometry = new THREE.ConeGeometry(5, 8, 4);
+        const material = new THREE.MeshBasicMaterial({ color: 0x555555, wireframe: true });
+        const pyramid = new THREE.Mesh(geometry, material);
+        scene.add(pyramid);
+
+        // Altın Zirve (Soru İşareti Yerine Şimdilik Parlayan Bir Parça)
+        const tipGeo = new THREE.ConeGeometry(1, 1.6, 4);
+        const tipMat = new THREE.MeshBasicMaterial({ color: 0xffd700 });
+        const tip = new THREE.Mesh(tipGeo, tipMat);
+        tip.position.y = 4.8;
+        pyramid.add(tip);
+
+        camera.position.z = 15;
+
+        function animate() {
+            requestAnimationFrame(animate);
+            pyramid.rotation.y += 0.005;
+            renderer.render(scene, camera);
+        }
+        animate();
+    </script>
+</body>
+</html>
