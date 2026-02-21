@@ -49,26 +49,76 @@
     </script>
 </body>
 </html>
-// Gövde: Siyah, parlak taşlar
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>The Eternal Pyramid</title>
+    <style>
+        body { margin: 0; background-color: #000; color: gold; font-family: 'Courier New', monospace; text-align: center; overflow: hidden; }
+        #ui { position: absolute; top: 5%; width: 100%; z-index: 10; pointer-events: none; }
+        button { pointer-events: auto; background: linear-gradient(45deg, #ffd700, #ff8c00); color: black; padding: 15px 35px; border: none; font-weight: bold; cursor: pointer; border-radius: 50px; font-size: 1.1rem; box-shadow: 0 0 20px rgba(255, 215, 0, 0.4); transition: 0.3s; }
+        button:hover { transform: scale(1.1); box-shadow: 0 0 30px rgba(255, 215, 0, 0.7); }
+        #stats { position: absolute; bottom: 20px; left: 20px; color: #0f0; font-size: 0.9rem; text-shadow: 0 0 5px #0f0; }
+    </style>
+</head>
+<body>
+    <div id="ui">
+        <h1>THE ETERNAL PYRAMID</h1>
+        <p>Adını Sonsuzluğa Kazı - 1 USD (SOL)</p>
+        <button onclick="payWithSolana()">TUĞLA SATIN AL</button>
+    </div>
+    <div id="stats">CANLI BAĞIŞ: $1,876,420</div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // IŞIKLANDIRMA (Siyah taşların parlaması için şart)
+        const light = new THREE.PointLight(0xffffff, 1.5, 100);
+        light.position.set(10, 10, 10);
+        scene.add(light);
+        scene.add(new THREE.AmbientLight(0x404040, 2));
+
+        // PİRAMİT GÖVDESİ (Siyah Parlak Taşlar)
         const geometry = new THREE.ConeGeometry(5, 8, 4);
-        const material = new THREE.MeshPhongMaterial({ color: 0x111111, flatShading: true, shininess: 100 });
+        const material = new THREE.MeshStandardMaterial({ 
+            color: 0x111111, 
+            roughness: 0.1, 
+            metalness: 0.8,
+            flatShading: true 
+        });
         const pyramid = new THREE.Mesh(geometry, material);
         scene.add(pyramid);
 
-        // Kenar Çizgileri: Daha havalı bir derinlik için
+        // Kenar Çizgileri (Derinlik hissi verir)
         const edges = new THREE.EdgesGeometry(geometry);
-        const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0x333333 }));
+        const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0xffd700, transparent: true, opacity: 0.3 }));
         pyramid.add(line);
 
-        // ALTIN ZİRVE: Soru işaretli dönen kısım
+        // ALTIN ZİRVE
         const tipGeo = new THREE.ConeGeometry(1, 1.6, 4);
         const tipMat = new THREE.MeshStandardMaterial({ color: 0xffd700, metalness: 1, roughness: 0.1 });
         const tip = new THREE.Mesh(tipGeo, tipMat);
         tip.position.y = 4.8;
         pyramid.add(tip);
 
-        // Işıklandırma (Taşların parlaması için şart)
-        const light = new THREE.PointLight(0xffffff, 1, 100);
-        light.position.set(10, 10, 10);
-        scene.add(light);
-        scene.add(new THREE.AmbientLight(0x404040));
+        camera.position.z = 12;
+
+        function animate() {
+            requestAnimationFrame(animate);
+            pyramid.rotation.y += 0.005;
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        function payWithSolana() {
+            alert("Ödeme Sistemi Entegre Ediliyor...\nLütfen SOL cüzdanınızı hazırlayın.");
+        }
+    </script>
+</body>
+</html>
