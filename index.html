@@ -2,140 +2,105 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>THE MONOLITH | ZENITH</title>
+    <title>THE ZENITH MONOLITH</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@900&display=swap');
-        body { margin: 0; background: #020202; overflow: hidden; cursor: crosshair; }
-        
+        body { margin: 0; background: #000; overflow: hidden; cursor: none; }
         #ui {
             position: absolute; width: 100%; height: 100%;
             display: flex; flex-direction: column; justify-content: space-between;
-            align-items: center; padding: 60px; z-index: 10; pointer-events: none;
+            align-items: center; padding: 50px; z-index: 100; pointer-events: none;
         }
-
         #counter {
-            font-family: 'Cinzel', serif; font-size: 8vw; color: #d4af37;
-            text-shadow: 0 0 40px rgba(0,0,0,1), 0 0 10px rgba(212,175,55,0.2);
-            margin: 0; letter-spacing: -2px;
+            font-family: 'Cinzel', serif; font-size: 8vw; color: #fff; margin: 0;
+            background: linear-gradient(to bottom, #fff 0%, #d4af37 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 30px rgba(212,175,55,0.4));
         }
-
-        .label { color: #444; letter-spacing: 20px; font-size: 0.7rem; text-transform: uppercase; margin-top: 10px; }
+        #cursor-glow {
+            position: fixed; width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(212,175,55,0.15) 0%, rgba(0,0,0,0) 70%);
+            border-radius: 50%; pointer-events: none; transform: translate(-50%, -50%); z-index: 5;
+        }
     </style>
 </head>
 <body>
 
+<div id="cursor-glow"></div>
 <div id="ui">
-    <div style="text-align:center">
-        <h1 id="counter">8,000,000,000</h1>
-        <div class="label">Monument of Humanity</div>
-    </div>
+    <h1 id="counter">8,000,000,000</h1>
+    <div style="color:#d4af37; font-family:Cinzel; letter-spacing:10px; opacity:0.5">THE FINAL RELIC</div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(20, window.innerWidth / window.innerHeight, 1, 1000);
-    camera.position.set(0, 5, 45);
+    const camera = new THREE.PerspectiveCamera(18, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 2, 40);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.shadowMap.enabled = true;
-    renderer.toneMapping = THREE.FilmicToneMapping;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 0.8;
     document.body.appendChild(renderer.domElement);
 
-    const world = new THREE.Group();
-    scene.add(world);
+    const group = new THREE.Group();
+    scene.add(group);
 
-    // --- BRÜTALİST GRANİT PİRAMİT ---
-    // Taş dokusu için gürültülü (noisy) bir bump map oluşturuyoruz
-    const createStoneTex = () => {
-        const c = document.createElement('canvas'); c.width=1024; c.height=1024;
-        const ctx = c.getContext('2d');
-        ctx.fillStyle = '#111'; ctx.fillRect(0,0,1024,1024);
-        for(let i=0; i<100000; i++) {
-            ctx.fillStyle = `rgba(255,255,255,${Math.random()*0.05})`;
-            ctx.fillRect(Math.random()*1024, Math.random()*1024, 2, 2);
-        }
-        return new THREE.CanvasTexture(c);
-    };
-    const stoneTex = createStoneTex();
-
+    // --- OBSIDIAN STONE (Işığı Soğuran Kütle) ---
+    const pyramidGeo = new THREE.ConeGeometry(8, 12, 4);
     const pyramidMat = new THREE.MeshStandardMaterial({ 
-        color: 0x1a1a1a, 
-        bumpMap: stoneTex, 
-        bumpScale: 0.5, 
-        roughness: 0.95, 
-        metalness: 0.05 
+        color: 0x0a0a0a, roughness: 1, metalness: 0, flatShading: true 
     });
+    const monolith = new THREE.Mesh(pyramidGeo, pyramidMat);
+    group.add(monolith);
 
-    const pyramid = new THREE.Mesh(new THREE.ConeGeometry(10, 15, 4), pyramidMat);
-    pyramid.receiveShadow = true;
-    world.add(pyramid);
-
-    // --- RÖLYEF (KAZINMIŞ YÜZLER) ---
-    for(let i=0; i<120; i++) {
+    // --- RELIEF FACES (Oymalar) ---
+    for(let i=0; i<80; i++) {
         const side = i % 4;
-        const row = Math.floor(i / 12);
+        const row = Math.floor(i / 10);
         const angle = side * (Math.PI / 2);
-        const radius = 8.1 - (row * 0.6);
+        const radius = 6.8 - (row * 0.5);
         
-        // Yüzleri taşa kazınmış, derinlikli plakalar gibi ekliyoruz
-        const faceTex = new THREE.TextureLoader().load(`https://i.pravatar.cc/150?u=${i}`);
+        const tex = new THREE.TextureLoader().load(`https://i.pravatar.cc/100?u=${i}`);
         const faceMat = new THREE.MeshStandardMaterial({ 
-            map: faceTex, 
-            bumpMap: faceTex, 
-            bumpScale: -0.3, // İçeri doğru kazınma etkisi
-            color: 0x222,
-            transparent: true,
-            opacity: 0.7,
-            blending: THREE.MultiplyBlending
+            map: tex, transparent: true, opacity: 0.3,
+            blending: THREE.AdditiveBlending, color: 0x332211
         });
-
-        const plane = new THREE.Mesh(new THREE.PlaneGeometry(0.8, 0.8), faceMat);
-        plane.position.set(Math.cos(angle)*radius, (row * 1.1) - 6.5, Math.sin(angle)*radius);
+        const plane = new THREE.Mesh(new THREE.PlaneGeometry(0.7, 0.7), faceMat);
+        plane.position.set(Math.cos(angle)*radius, (row * 0.9) - 5, Math.sin(angle)*radius);
         plane.rotation.y = angle;
-        world.add(plane);
+        group.add(plane);
     }
 
-    // --- ZİRVE (ANTİK ALTIN SORU İŞARETİ) ---
-    const qCan = document.createElement('canvas'); qCan.width=512; qCan.height=512;
-    const qCtx = qCan.getContext('2d');
-    qCtx.font = "900 400px 'Cinzel'"; qCtx.fillStyle = "#d4af37"; qCtx.textAlign="center"; qCtx.textBaseline="middle";
-    qCtx.fillText("?", 256, 256);
-    const qSprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(qCan), transparent: true }));
-    qSprite.position.y = 8.5; qSprite.scale.set(6, 6, 1);
-    world.add(qSprite);
+    // --- DİNAMİK MEŞALE IŞIĞI (Fareyi Takip Eder) ---
+    const torch = new THREE.PointLight(0xd4af37, 6, 40);
+    scene.add(torch);
 
-    // --- IŞIKLANDIRMA (MEŞALE ETKİSİ) ---
-    const mainLight = new THREE.SpotLight(0xd4af37, 4, 100, Math.PI/4, 0.5);
-    mainLight.position.set(20, 20, 20);
-    mainLight.castShadow = true;
-    scene.add(mainLight);
+    const amb = new THREE.AmbientLight(0x000000); // Ortam ışığı yok, her yer karanlık
+    scene.add(amb);
 
-    const fillLight = new THREE.PointLight(0x4444ff, 0.5, 50); // Soğuk bir kontrast
-    fillLight.position.set(-15, -10, 10);
-    scene.add(fillLight);
-
-    // --- HANTAL HAREKET KONTROLÜ ---
-    let targetX = 0, targetY = 0;
+    // --- KONTROLLER ---
+    const glow = document.getElementById('cursor-glow');
+    let mX = 0, mY = 0;
+    
     window.addEventListener('mousemove', (e) => {
-        targetX = (e.clientX / window.innerWidth - 0.5) * 0.5;
-        targetY = (e.clientY / window.innerHeight - 0.5) * 0.3;
+        mX = (e.clientX / window.innerWidth - 0.5) * 2;
+        mY = (e.clientY / window.innerHeight - 0.5) * 2;
+        glow.style.left = e.clientX + 'px';
+        glow.style.top = e.clientY + 'px';
+        
+        // Işığı fareye bağla
+        torch.position.x = mX * 15;
+        torch.position.y = -mY * 15 + 2;
+        torch.position.z = 10;
     });
 
     function animate() {
         requestAnimationFrame(animate);
-        
-        // Çok yavaş dönüş
-        world.rotation.y += 0.0005; 
-        
-        // Mouse müdahalesi (Tonlarca ağırlık hissi için çok düşük lerp)
-        world.rotation.y += (targetX - world.rotation.y % (Math.PI*2)) * 0.02;
-        world.rotation.x += (targetY - world.rotation.x) * 0.02;
-
-        qSprite.position.y = 8.5 + Math.sin(Date.now()*0.001)*0.2;
-
+        group.rotation.y += 0.0008; // Çok yavaş, devasa bir kütle gibi
+        group.rotation.y += mX * 0.01;
+        group.rotation.x += (mY * 0.1 - group.rotation.x) * 0.05;
         renderer.render(scene, camera);
     }
     animate();
