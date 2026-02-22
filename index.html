@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THE ETERNAL PYRAMID | NEXUS v3</title>
+    <title>THE ETERNAL NEXUS | LIVE</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Montserrat:wght@200;400&display=swap');
         body { margin: 0; background-color: #000; overflow: hidden; font-family: 'Montserrat', sans-serif; }
@@ -14,167 +14,155 @@
             align-items: center; padding: 40px 0; pointer-events: none; z-index: 100;
         }
 
-        h1 { 
-            font-family: 'Cinzel', serif; font-size: clamp(2rem, 5vw, 3.5rem); 
-            letter-spacing: clamp(10px, 2vw, 25px); color: #fff; margin: 0;
-            background: linear-gradient(to bottom, #ffffff 0%, #d4af37 100%);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 15px rgba(212,175,55,0.5));
+        /* Sayaç Alanı */
+        #counter-container {
+            text-align: center; margin-top: 20px;
         }
+        #main-counter {
+            font-family: 'Cinzel', serif; font-size: 3.5rem; color: #fff;
+            background: linear-gradient(to bottom, #fff, #d4af37);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(212, 175, 55, 0.5);
+            margin: 0;
+        }
+        .counter-label { color: #d4af37; letter-spacing: 5px; font-size: 0.8rem; text-transform: uppercase; }
 
-        .cta-box { pointer-events: auto; margin-bottom: 20px; }
         button {
-            background: rgba(0,0,0,0.8); color: #d4af37; border: 1px solid #d4af37;
-            padding: 18px 50px; font-size: 0.9rem; letter-spacing: 5px;
-            cursor: pointer; transition: 0.5s; text-transform: uppercase;
+            pointer-events: auto; background: rgba(0,0,0,0.8); color: #d4af37; 
+            border: 1px solid #d4af37; padding: 15px 40px; cursor: pointer; 
+            letter-spacing: 5px; transition: 0.5s; text-transform: uppercase;
             backdrop-filter: blur(10px);
         }
-        button:hover { background: #d4af37; color: #000; box-shadow: 0 0 50px rgba(212,175,55,0.6); transform: translateY(-3px); }
-
-        #stats { position: absolute; bottom: 30px; left: 40px; color: rgba(212,175,55,0.6); font-size: 0.7rem; letter-spacing: 3px; }
+        button:hover { background: #d4af37; color: #000; box-shadow: 0 0 40px rgba(212,175,55,0.6); }
     </style>
 </head>
 <body>
 
     <div id="ui">
-        <div style="text-align:center">
-            <h1>THE ETERNAL PYRAMID</h1>
-            <div style="color:#d4af37; letter-spacing:10px; font-size:0.8rem; margin-top:10px;">N E X U S</div>
+        <div id="counter-container">
+            <h1 id="main-counter">0,000,000,000</h1>
+            <div class="counter-label">Eternal Citizens Engraved</div>
         </div>
-        <div class="cta-box">
-            <button onclick="alert('ASCENSION INITIATED...')">ASCEND — 1 USD</button>
+        
+        <div style="margin-bottom: 30px;">
+            <button onclick="addCitizen()">ASCEND NOW — 1 USD</button>
         </div>
     </div>
 
-    <div id="stats">NETWORK: ACTIVE | NODES: 8.0B | LATENCY: 12ms</div>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
+        // --- SAHNE KURULUMU ---
         const scene = new THREE.Scene();
-        scene.fog = new THREE.FogExp2(0x000000, 0.04);
-
         const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.set(0, 2, 16);
+        camera.position.set(0, 1, 18); // Piramidi küçültmek için kamerayı uzaklaştırdım
 
-        const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         document.body.appendChild(renderer.domElement);
 
-        // --- DİNAMİK YÜZ VE DATA AKIŞI DOKUSU ---
-        const texSize = 2048;
+        // --- HAREKETLİ YILDIZ GÖKYÜZÜ ---
+        const starGeo = new THREE.BufferGeometry();
+        const starCount = 5000;
+        const posArray = new Float32Array(starCount * 3);
+        for(let i=0; i<starCount*3; i++) posArray[i] = (Math.random()-0.5)*100;
+        starGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        const stars = new THREE.Points(starGeo, new THREE.PointsMaterial({ 
+            size: 0.05, color: 0xffffff, transparent: true, opacity: 0.8 
+        }));
+        scene.add(stars);
+
+        // --- YÜZ MOZAİĞİ SİSTEMİ ---
+        const texSize = 1024;
         const canvas = document.createElement('canvas');
         canvas.width = texSize; canvas.height = texSize;
         const ctx = canvas.getContext('2d');
         const texture = new THREE.CanvasTexture(canvas);
         
         const faceImages = [];
-        for(let i=0; i<40; i++) {
+        for(let i=0; i<30; i++) {
             const img = new Image();
             img.crossOrigin = "Anonymous";
-            img.src = `https://i.pravatar.cc/150?u=${Math.random()}`;
+            img.src = `https://i.pravatar.cc/100?u=${Math.random()}`;
             faceImages.push(img);
         }
 
-        let offset = 0;
-        function updateTexture() {
-            ctx.fillStyle = '#050505';
+        function drawMosaic() {
+            ctx.fillStyle = '#0a0a0a';
             ctx.fillRect(0, 0, texSize, texSize);
+            const cols = 12; const rows = 6;
+            const w = texSize / cols; const h = (texSize/2) / rows;
             
-            const cols = 16; const rows = 8;
-            const w = texSize / cols; const h = texSize / rows;
-            
-            offset += 1.5; // Aşağı akış hızı
-            
-            for(let r = -1; r < rows + 1; r++) {
-                for(let c = 0; c < cols; c++) {
-                    const imgIndex = Math.abs((r + c) % faceImages.length);
-                    const img = faceImages[imgIndex];
-                    const yPos = (r * h) + (offset % h);
-                    
+            for(let r=0; r<rows; r++) {
+                for(let c=0; c<cols; c++) {
+                    const img = faceImages[Math.floor(Math.random()*faceImages.length)];
                     if(img.complete) {
-                        ctx.filter = 'grayscale(100%) brightness(40%) contrast(150%)';
-                        ctx.drawImage(img, c * w, yPos, w-5, h-5);
+                        ctx.filter = 'grayscale(100%) brightness(60%)';
+                        ctx.drawImage(img, c*w, (texSize/2)+(r*h), w-2, h-2);
                     }
-                    
-                    // Altın Grid Çizgileri
-                    ctx.filter = 'none';
-                    ctx.strokeStyle = 'rgba(212, 175, 55, 0.15)';
-                    ctx.lineWidth = 2;
-                    ctx.strokeRect(c * w, yPos, w, h);
+                    ctx.strokeStyle = 'rgba(212,175,55,0.2)';
+                    ctx.strokeRect(c*w, (texSize/2)+(r*h), w, h);
                 }
             }
             texture.needsUpdate = true;
         }
 
-        // --- PİRAMİT ---
-        const geometry = new THREE.ConeGeometry(7, 10, 4);
-        const material = new THREE.MeshStandardMaterial({ 
-            map: texture,
-            roughness: 0.1,
-            metalness: 0.9,
-            emissive: 0xd4af37,
-            emissiveIntensity: 0.05
-        });
-        const pyramid = new THREE.Mesh(geometry, material);
+        // --- PİRAMİT VE SORU İŞARETİ ---
+        const pyramid = new THREE.Mesh(
+            new THREE.ConeGeometry(5, 7, 4), // Boyutlar ufaltıldı
+            new THREE.MeshStandardMaterial({ map: texture, metalness: 0.7, roughness: 0.2 })
+        );
         scene.add(pyramid);
 
-        // --- SORU İŞARETİ (ZİRVE) ---
-        const qCanvas = document.createElement('canvas');
-        qCanvas.width = 512; qCanvas.height = 512;
-        const qCtx = qCanvas.getContext('2d');
-        qCtx.font = "bold 350px 'Cinzel', serif";
-        qCtx.textAlign = "center"; qCtx.textBaseline = "middle";
-        qCtx.fillStyle = "#fff";
-        qCtx.shadowColor = "#d4af37"; qCtx.shadowBlur = 50;
-        qCtx.fillText("?", 256, 256);
-
-        const qTexture = new THREE.CanvasTexture(qCanvas);
-        const qSprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: qTexture, transparent: true }));
-        qSprite.position.y = 6.2;
-        qSprite.scale.set(3.5, 3.5, 1);
+        const qSprite = new THREE.Sprite(new THREE.SpriteMaterial({ 
+            map: new THREE.CanvasTexture(createQMark()), transparent: true 
+        }));
+        qSprite.position.y = 4.5; qSprite.scale.set(2.5, 2.5, 1);
         scene.add(qSprite);
 
-        // --- IŞIKLANDIRMA ---
-        const mainLight = new THREE.PointLight(0xffffff, 2, 50);
-        mainLight.position.set(5, 5, 10);
-        scene.add(mainLight);
-        
-        const topLight = new THREE.PointLight(0xd4af37, 3, 20);
-        topLight.position.set(0, 7, 0);
-        scene.add(topLight);
+        function createQMark() {
+            const c = document.createElement('canvas');
+            c.width = 256; c.height = 256;
+            const cx = c.getContext('2d');
+            cx.font = "bold 160px 'Cinzel'"; cx.fillStyle = "#d4af37";
+            cx.textAlign = "center"; cx.textBaseline = "middle";
+            cx.fillText("?", 128, 128);
+            return c;
+        }
 
-        // ARKA PLAN PARÇACIKLARI
-        const partGeo = new THREE.BufferGeometry();
-        const partCount = 2000;
-        const posArray = new Float32Array(partCount * 3);
-        for(let i=0; i<partCount*3; i++) posArray[i] = (Math.random()-0.5)*60;
-        partGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-        const particles = new THREE.Points(partGeo, new THREE.PointsMaterial({ size: 0.02, color: 0xd4af37, transparent: true, opacity: 0.3 }));
-        scene.add(particles);
+        // IŞIKLAR
+        const pLight = new THREE.PointLight(0xffffff, 1.5);
+        pLight.position.set(5, 5, 10);
+        scene.add(pLight);
+        scene.add(new THREE.AmbientLight(0x222222));
 
-        // MOUSE HAREKETİ
-        let mouseX = 0; let mouseY = 0;
-        window.addEventListener('mousemove', (e) => {
-            mouseX = (e.clientX / window.innerWidth - 0.5) * 0.5;
-            mouseY = (e.clientY / window.innerHeight - 0.5) * 0.2;
-        });
+        // --- SAYAÇ MANTIĞI ---
+        let currentCitizens = 7842930412; // Başlangıç (Sahte ama yüksek rakam)
+        const counterEl = document.getElementById('main-counter');
 
+        function updateCounter() {
+            currentCitizens += Math.floor(Math.random() * 3); // Sürekli artış simülasyonu
+            counterEl.innerText = currentCitizens.toLocaleString('en-US').replace(/,/g, ',');
+        }
+
+        function addCitizen() {
+            currentCitizens += 1;
+            alert("Ruhunuz anıta eklendi.");
+        }
+
+        // --- ANİMASYON ---
         function animate() {
             requestAnimationFrame(animate);
+            pyramid.rotation.y += 0.005;
+            stars.rotation.y += 0.0002; // Gökyüzü yavaşça döner
+            stars.position.z += 0.01; if(stars.position.z > 10) stars.position.z = 0; // Yıldızlar bize doğru akar
             
-            updateTexture();
+            if(Math.random() > 0.97) drawMosaic(); // Yüzler döngüde değişir
+            updateCounter();
             
-            // Yumuşak dönüş ve mouse takibi
-            pyramid.rotation.y += 0.003;
-            pyramid.rotation.x = THREE.MathUtils.lerp(pyramid.rotation.x, mouseY, 0.05);
-            pyramid.rotation.z = THREE.MathUtils.lerp(pyramid.rotation.z, -mouseX, 0.05);
-            
-            qSprite.position.y = 6.2 + Math.sin(Date.now() * 0.002) * 0.15;
-            particles.rotation.y += 0.0003;
-
             renderer.render(scene, camera);
         }
+        
+        setTimeout(drawMosaic, 1000);
         animate();
 
         window.addEventListener('resize', () => {
