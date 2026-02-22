@@ -3,20 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THE ETERNAL PYRAMID</title>
+    <title>THE ETERNAL PYRAMID | Yaşayan Anıt</title>
     <style>
-        /* Lüks ve Monümental Fontlar */
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@300;400&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Montserrat:wght@300;400&display=swap');
 
         body { 
             margin: 0; 
-            background-color: #000; 
-            color: #d4af37; /* Gerçek Altın Rengi */
+            background-color: #050403; /* Çok koyu çöl gecesi */
+            color: #d4af37; 
             font-family: 'Montserrat', sans-serif; 
             overflow: hidden; 
         }
         
-        /* Ultra-Premium Arayüz */
         #ui { 
             position: absolute; 
             top: 0; left: 0; width: 100%; height: 100%; 
@@ -24,60 +22,57 @@
             justify-content: space-between; align-items: center; 
             padding: 6vh 0; box-sizing: border-box; 
             pointer-events: none; z-index: 10;
-            background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.8) 100%);
+            background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.85) 100%);
         }
 
         h1 { 
             font-family: 'Cinzel', serif;
-            font-size: clamp(2rem, 5vw, 4rem); 
+            font-size: clamp(1.8rem, 4vw, 3.5rem); 
             font-weight: 700; 
-            letter-spacing: 20px; 
+            letter-spacing: 15px; 
             margin: 0; 
-            text-transform: uppercase;
-            text-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
             background: linear-gradient(to bottom, #fff, #d4af37);
             -webkit-background-clip: text; 
             -webkit-text-fill-color: transparent;
         }
 
         p.subtitle {
-            font-size: 1rem;
-            letter-spacing: 5px;
-            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9rem;
+            letter-spacing: 6px;
+            color: rgba(255, 255, 255, 0.6);
             margin-top: 10px;
             text-transform: uppercase;
         }
 
-        /* Zarif Buton Tasarımı */
         .action-area { pointer-events: auto; margin-bottom: 2vh; text-align: center; }
         
         button {
-            background: transparent; 
+            background: rgba(10, 5, 0, 0.6); 
             color: #d4af37; 
-            border: 1px solid rgba(212, 175, 55, 0.5);
+            border: 1px solid rgba(212, 175, 55, 0.4);
             padding: 15px 40px; 
-            font-size: 0.9rem; 
+            font-size: 1rem; 
             font-family: 'Montserrat', sans-serif;
-            letter-spacing: 4px;
+            letter-spacing: 3px;
             cursor: pointer; 
-            transition: all 0.5s ease;
+            transition: all 0.4s ease;
             backdrop-filter: blur(5px);
             text-transform: uppercase;
         }
 
         button:hover {
-            background: rgba(212, 175, 55, 0.1); 
+            background: rgba(212, 175, 55, 0.15); 
             border: 1px solid #d4af37;
-            box-shadow: 0 0 30px rgba(212, 175, 55, 0.2);
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
             transform: scale(1.05);
         }
 
-        /* Mimari Alt Bilgi */
         #footer { 
-            position: absolute; bottom: 30px; width: 100%;
-            display: flex; justify-content: space-between; padding: 0 50px;
-            box-sizing: border-box; color: rgba(255, 255, 255, 0.3);
-            font-size: 0.7rem; letter-spacing: 2px; pointer-events: none;
+            position: absolute; bottom: 20px; width: 100%;
+            display: flex; justify-content: space-between; padding: 0 40px;
+            box-sizing: border-box; color: rgba(255, 255, 255, 0.4);
+            font-size: 0.75rem; letter-spacing: 2px; pointer-events: none;
         }
     </style>
 </head>
@@ -86,124 +81,147 @@
     <div id="ui">
         <div style="text-align: center;">
             <h1>THE ETERNAL PYRAMID</h1>
-            <p class="subtitle">A Monument for Humanity</p>
+            <p class="subtitle">The Mosaic of Humanity</p>
         </div>
         
         <div class="action-area">
-            <button onclick="alert('Ödeme altyapısı hazırlanıyor...')">ENGRAVE YOUR NAME — 1 USD</button>
+            <button onclick="alert('Cüzdan bağlantısı bekleniyor...')">FOTOĞRAFINI EKLE — 1 USD</button>
         </div>
     </div>
 
     <div id="footer">
-        <span>STATUS: INITIATED</span>
-        <span>CAPACITY: 8,000,000,000</span>
+        <span>LIVE UPDATES: ACTIVE</span>
+        <span>CITIZENS: 8,000,000,000</span>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
-        // SAHNE VE SİS (Derinlik ve gizem için)
         const scene = new THREE.Scene();
-        scene.fog = new THREE.FogExp2(0x020202, 0.04);
+        scene.fog = new THREE.FogExp2(0x1a120b, 0.03); // Çöl gecesi sisi
 
-        // KAMERA (Aşağıdan yukarı bakış - Devasa hissettirir)
         const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.set(0, -3, 12);
+        camera.position.set(0, -2, 13);
         camera.lookAt(0, 3, 0);
 
         const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Performans ve kalite dengesi
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         document.body.appendChild(renderer.domElement);
 
-        // PİRAMİT GÖVDESİ (Mat, koyu taş ve keskin hatlar)
+        // --- DİNAMİK FOTOĞRAF MOZAİĞİ (Canvas Texture) ---
+        const texSize = 512;
+        const gridSize = 32; // Piramidin üzerindeki tuğla/fotoğraf sayısı (ızgara)
+        const canvas = document.createElement('canvas');
+        canvas.width = texSize;
+        canvas.height = texSize;
+        const ctx = canvas.getContext('2d');
+        
+        // Zemin rengi (Gerçek piramit kum taşı rengi)
+        ctx.fillStyle = '#c2b280';
+        ctx.fillRect(0, 0, texSize, texSize);
+        
+        const dynamicTexture = new THREE.CanvasTexture(canvas);
+        dynamicTexture.magFilter = THREE.NearestFilter; // Pikselli/Keskin görünüm
+
+        // --- PİRAMİT GÖVDESİ ---
         const geometry = new THREE.ConeGeometry(6, 9, 4);
         const material = new THREE.MeshStandardMaterial({ 
-            color: 0x080808, 
-            roughness: 0.9, 
-            metalness: 0.3,
+            map: dynamicTexture, // Sürekli değişen fotoğraf kaplaması
+            roughness: 0.8, 
+            metalness: 0.1,
             flatShading: true 
         });
         const pyramid = new THREE.Mesh(geometry, material);
         scene.add(pyramid);
 
-        // ALTIN DAMARLAR (Tuğla/Mimari Vurgusu)
-        const edges = new THREE.EdgesGeometry(geometry);
-        const lineMaterial = new THREE.LineBasicMaterial({ 
-            color: 0xd4af37, 
-            transparent: true, 
-            opacity: 0.3 
-        });
-        const lines = new THREE.LineSegments(edges, lineMaterial);
-        pyramid.add(lines);
+        // --- ALTIN SORU İŞARETİ ZİRVE (Glow Efektli Sprite) ---
+        const qCanvas = document.createElement('canvas');
+        qCanvas.width = 256; qCanvas.height = 256;
+        const qCtx = qCanvas.getContext('2d');
+        qCtx.font = "bold 160px 'Cinzel', serif";
+        qCtx.fillStyle = "#FFD700";
+        qCtx.textAlign = "center";
+        qCtx.textBaseline = "middle";
+        // Soru işaretine parlama (glow) efekti
+        qCtx.shadowColor = "#FFD700";
+        qCtx.shadowBlur = 30;
+        qCtx.fillText("?", 128, 128);
+        qCtx.shadowBlur = 10;
+        qCtx.fillText("?", 128, 128); // Daha keskin olması için ikinci katman
 
-        // ALTIN ZİRVE (CAPSTONE - Gücü temsil eder)
-        const tipGeo = new THREE.ConeGeometry(1.2, 1.8, 4);
-        const tipMat = new THREE.MeshStandardMaterial({ 
-            color: 0xd4af37, metalness: 1, roughness: 0.2, emissive: 0x332200 
-        });
-        const tip = new THREE.Mesh(tipGeo, tipMat);
-        tip.position.y = 5.4;
-        pyramid.add(tip);
+        const qTexture = new THREE.CanvasTexture(qCanvas);
+        const qMaterial = new THREE.SpriteMaterial({ map: qTexture, color: 0xffffff, transparent: true });
+        const questionMark = new THREE.Sprite(qMaterial);
+        questionMark.position.set(0, 5.8, 0);
+        questionMark.scale.set(2.5, 2.5, 1);
+        scene.add(questionMark);
 
-        // SİNEMATİK IŞIKLANDIRMA
-        const spotLight = new THREE.SpotLight(0xd4af37, 3); // Sıcak altın ışık
-        spotLight.position.set(15, 20, 10);
-        spotLight.angle = Math.PI / 4;
-        spotLight.penumbra = 0.8;
+        // --- IŞIKLANDIRMA ---
+        const spotLight = new THREE.SpotLight(0xffeedd, 2); // Sıcak çöl güneşi / ay ışığı
+        spotLight.position.set(10, 20, 10);
         scene.add(spotLight);
 
-        const fillLight = new THREE.DirectionalLight(0x112233, 1.5); // Soğuk mavi dolgu ışığı (kontrast için)
+        const fillLight = new THREE.DirectionalLight(0x443322, 1);
         fillLight.position.set(-10, 0, -10);
         scene.add(fillLight);
         
-        scene.add(new THREE.AmbientLight(0x050505));
+        scene.add(new THREE.AmbientLight(0x222222));
 
-        // ALTIN TOZLARI (Havada uçuşan partiküller, mekana ruh katar)
+        // --- ÇÖL TOZLARI (Atmosfer) ---
         const particlesGeo = new THREE.BufferGeometry();
-        const particlesCount = 700;
+        const particlesCount = 500;
         const posArray = new Float32Array(particlesCount * 3);
         for(let i = 0; i < particlesCount * 3; i++) {
-            posArray[i] = (Math.random() - 0.5) * 30; // X, Y, Z konumları
+            posArray[i] = (Math.random() - 0.5) * 25;
         }
         particlesGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
         const particlesMat = new THREE.PointsMaterial({
-            size: 0.03,
-            color: 0xd4af37,
-            transparent: true,
-            opacity: 0.6,
-            blending: THREE.AdditiveBlending
+            size: 0.04, color: 0xd4af37, transparent: true, opacity: 0.4, blending: THREE.AdditiveBlending
         });
         const particles = new THREE.Points(particlesGeo, particlesMat);
         scene.add(particles);
 
-        // ZAMANLAYICI VE ANİMASYON
+        // --- ANİMASYON DÖNGÜSÜ ---
         const clock = new THREE.Clock();
 
         function animate() {
             requestAnimationFrame(animate);
             const elapsedTime = clock.getElapsedTime();
 
-            // Piramit çok ağır, asil bir şekilde döner
-            pyramid.rotation.y = elapsedTime * 0.05;
+            // 1. Piramit çok ağır dönüyor
+            pyramid.rotation.y = elapsedTime * 0.03;
             
-            // Zirve taşı hafifçe kendi etrafında daha hızlı döner ve yükselip alçalır (Nefes alma efekti)
-            tip.rotation.y = elapsedTime * 0.2;
-            tip.position.y = 5.4 + Math.sin(elapsedTime * 2) * 0.05;
+            // 2. Soru İşareti havada süzülüyor (Nefes Alma)
+            questionMark.position.y = 5.8 + Math.sin(elapsedTime * 2) * 0.1;
 
-            // Altın tozları yavaşça yukarı doğru süzülür
+            // 3. FOTOĞRAFLARI GÜNCELLEME (Mozaik değişimi)
+            // Her karede rastgele 3 tuğlanın (fotoğrafın) değişmesini simüle ediyoruz
+            for(let i=0; i<3; i++) {
+                const x = Math.floor(Math.random() * gridSize) * (texSize/gridSize);
+                const y = Math.floor(Math.random() * gridSize) * (texSize/gridSize);
+                
+                // İnsan fotoğraflarını simüle eden renkli avatar tonları
+                const hue = Math.floor(Math.random() * 360);
+                const lightness = 30 + Math.random() * 40; // Çok parlak olmasın, gerçekçi dursun
+                
+                ctx.fillStyle = `hsl(${hue}, 40%, ${lightness}%)`;
+                ctx.fillRect(x, y, texSize/gridSize, texSize/gridSize);
+            }
+            dynamicTexture.needsUpdate = true; // Ekran kartına dokunun değiştiğini söyler
+
+            // 4. Çöl tozları uçuşuyor
             const positions = particles.geometry.attributes.position.array;
             for(let i = 1; i < particlesCount * 3; i += 3) {
-                positions[i] += 0.01; // Y ekseninde yukarı
-                if(positions[i] > 15) positions[i] = -15; // Tepeye çıkan aşağıdan geri döner
+                positions[i] += 0.005; 
+                if(positions[i] > 10) positions[i] = -10; 
             }
             particles.geometry.attributes.position.needsUpdate = true;
-            particles.rotation.y = elapsedTime * 0.02;
+            particles.rotation.y = elapsedTime * 0.01;
 
             renderer.render(scene, camera);
         }
         animate();
 
-        // PENCERE BOYUTLANDIRMA
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
