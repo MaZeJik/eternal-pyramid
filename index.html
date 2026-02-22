@@ -2,139 +2,123 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>THE ABSOLUTE</title>
+    <title>THE ABSOLUTE ZERO</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@900&display=swap');
-        body { margin: 0; background: #000; overflow: hidden; cursor: crosshair; filter: contrast(120%) brightness(90%); }
+        body { margin: 0; background: #000; overflow: hidden; cursor: none; }
         
-        #meta-ui {
-            position: absolute; inset: 0; z-index: 1000;
-            display: flex; flex-direction: column; justify-content: space-between;
-            align-items: center; padding: 10vh; pointer-events: none;
+        #ui-master {
+            position: absolute; inset: 0; display: flex; flex-direction: column;
+            justify-content: space-between; align-items: center; padding: 12vh;
+            z-index: 1000; pointer-events: none;
         }
 
-        #master-pulse {
-            font-family: 'Cinzel', serif; font-size: 15vw; color: #fff;
-            background: linear-gradient(180deg, #ffffff 10%, #d4af37 100%);
+        #zenith-count {
+            font-family: 'Cinzel', serif; font-size: 14vw; color: #fff;
+            filter: drop-shadow(0 0 150px rgba(212,175,55,0.8));
+            background: linear-gradient(180deg, #fff 10%, #d4af37 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 150px rgba(212,175,55,1));
-            letter-spacing: -15px; line-height: 0.6; margin: 0;
-            animation: glitch 0.2s infinite alternate ease-in-out;
+            letter-spacing: -18px; line-height: 0.5; margin: 0;
         }
 
-        @keyframes glitch {
-            0% { transform: skew(0deg); opacity: 1; }
-            100% { transform: skew(1deg); opacity: 0.8; }
-        }
-
-        .void-sigil { 
-            color: #d4af37; letter-spacing: 50px; font-size: 0.4rem; 
-            text-transform: uppercase; opacity: 0.1; font-family: 'Cinzel';
-            text-indent: 50px;
+        .void-label {
+            color: #d4af37; letter-spacing: 60px; font-size: 0.4rem;
+            text-transform: uppercase; opacity: 0.15; font-family: 'Cinzel';
         }
     </style>
 </head>
 <body>
 
-<div id="meta-ui">
-    <div style="text-align: center;">
-        <h1 id="master-pulse">8,000,000,000</h1>
-        <div class="void-sigil">COLLECTIVE SINGULARITY</div>
+<div id="ui-master">
+    <div style="text-align:center">
+        <h1 id="zenith-count">8,000,000,000</h1>
+        <div class="void-label">THE COLLECTIVE CORE</div>
     </div>
-    <div class="void-sigil">THE FINAL FREQUENCY</div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(5, window.innerWidth / window.innerHeight, 1, 5000);
-    camera.position.z = 250;
+    const camera = new THREE.PerspectiveCamera(4, window.innerWidth / window.innerHeight, 1, 10000);
+    camera.position.z = 600;
 
-    const renderer = new THREE.WebGLRenderer({ antialias: false, stencil: false });
+    const renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: "high-performance" });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(1); // Brütalist hamlık için pikselleri yumuşatma
+    renderer.setPixelRatio(1); // Keskin ve ham pikseller
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 4.0;
     document.body.appendChild(renderer.domElement);
 
-    const monolithGroup = new THREE.Group();
-    scene.add(monolithGroup);
+    const monolith = new THREE.Group();
+    scene.add(monolith);
 
-    // --- THE RAW CORE (Ham Madde) ---
-    const geo = new THREE.ConeGeometry(12, 18, 4, 32, true);
+    // --- DARK MATTER GEOMETRY ---
+    const geo = new THREE.ConeGeometry(20, 32, 4, 1, true);
     const mat = new THREE.MeshStandardMaterial({ 
-        color: 0x000000, metalness: 1, roughness: 0, 
-        wireframe: false, emissive: 0xd4af37, emissiveIntensity: 0.02
+        color: 0x000000, roughness: 1, metalness: 0,
+        emissive: 0xd4af37, emissiveIntensity: 0.01
     });
     const core = new THREE.Mesh(geo, mat);
-    monolithGroup.add(core);
+    monolith.add(core);
 
-    // Kinetik Altın Kabuk
-    const shellGeo = new THREE.ConeGeometry(12.2, 18.2, 4, 1, true);
-    const shellMat = new THREE.MeshBasicMaterial({ 
-        color: 0xd4af37, wireframe: true, transparent: true, opacity: 0.03 
-    });
-    monolithGroup.add(new THREE.Mesh(shellGeo, shellMat));
+    // Kinetik Enerji Kabuğu (Parıldayan Kenarlar)
+    const shellGeo = new THREE.ConeGeometry(20.2, 32.2, 4, 1, true);
+    const shellMat = new THREE.MeshBasicMaterial({ color: 0xd4af37, wireframe: true, transparent: true, opacity: 0.05 });
+    monolith.add(new THREE.Mesh(shellGeo, shellMat));
 
-    // --- SOUL FRAGMENTS (Fosilleşmiş Işıklar) ---
-    const fragments = [];
-    for(let i=0; i<300; i++) {
+    // --- FRAGMENTED SOULS (Işık Fosil Sistemi) ---
+    const stars = [];
+    for(let i=0; i<400; i++) {
         const side = i % 4;
-        const row = Math.floor(i / 30);
+        const row = Math.floor(i / 40);
         const angle = side * (Math.PI / 2);
-        const radius = 11.5 - (row * 0.8);
+        const radius = 19 - (row * 1.2);
         
-        const faceTex = new THREE.TextureLoader().load(`https://i.pravatar.cc/100?u=${i + 1000}`);
+        const faceTex = new THREE.TextureLoader().load(`https://i.pravatar.cc/100?u=${i + 2026}`);
         const faceMat = new THREE.MeshBasicMaterial({ 
-            map: faceTex, transparent: true, opacity: 0, 
-            blending: THREE.AdditiveBlending, color: 0xd4af37
+            map: faceTex, transparent: true, opacity: 0, color: 0xd4af37, blending: THREE.AdditiveBlending 
         });
-        const p = new THREE.Mesh(new THREE.PlaneGeometry(0.8, 0.8), faceMat);
-        p.position.set(Math.cos(angle)*radius, (row * 1.5) - 8, Math.sin(angle)*radius);
+        const p = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), faceMat);
+        p.position.set(Math.cos(angle)*radius, (row * 2.5) - 15, Math.sin(angle)*radius);
         p.rotation.y = angle;
-        monolithGroup.add(p);
-        fragments.push({ m: p, offset: Math.random() * 20 });
+        monolith.add(p);
+        stars.push({ m: p, freq: Math.random() * 0.05 });
     }
 
-    // --- IŞIK (Yarıkların İçinden) ---
-    const pulseLight = new THREE.PointLight(0xd4af37, 100, 300);
-    pulseLight.position.set(0, 0, 50);
-    scene.add(pulseLight);
-
-    // --- KAOS MOTORU ---
+    // --- GRAVITY ENGINE ---
     let tX = 0, tY = 0, cX = 0, cY = 0;
     window.addEventListener('mousemove', (e) => {
-        tX = (e.clientX - window.innerWidth/2) * 0.0001;
-        tY = (e.clientY - window.innerHeight/2) * 0.0001;
+        tX = (e.clientX - window.innerWidth/2) * 0.00005;
+        tY = (e.clientY - window.innerHeight/2) * 0.00005;
     });
 
-    let frame = 0;
-    function run() {
-        frame++;
-        requestAnimationFrame(run);
+    function draw() {
+        requestAnimationFrame(draw);
         
-        cX += (tX - cX) * 0.01;
-        cY += (tY - cY) * 0.01;
+        // Atalet: Dev bir kütlenin yavaşlığı
+        cX += (tX - cX) * 0.005;
+        cY += (tY - cY) * 0.005;
         
-        monolithGroup.rotation.y += 0.0005 + cX;
-        monolithGroup.rotation.x += cY;
+        monolith.rotation.y += 0.0008 + cX;
+        monolith.rotation.x += cY;
 
-        // Rastgele Titreşim (Ağırlık Sarsıntısı)
-        if(Math.random() > 0.95) {
-            monolithGroup.position.x = (Math.random() - 0.5) * 0.1;
-            monolithGroup.position.y = (Math.random() - 0.5) * 0.1;
-        }
-
-        // Yüzlerin "Fosil" Gibi Belirmesi
-        fragments.forEach(f => {
-            const val = Math.pow(Math.sin(frame * 0.02 + f.offset), 15);
-            f.m.material.opacity = val * 0.6;
-            f.m.scale.setScalar(1 + val * 0.5);
+        // Subliminal Parlamalar
+        stars.forEach(s => {
+            const pulse = Math.pow(Math.sin(Date.now() * s.freq), 20);
+            s.m.material.opacity = pulse * 0.7;
+            s.m.scale.setScalar(1 + pulse * 0.5);
         });
+
+        // Kütle Titreşimi
+        if(Math.random() > 0.98) {
+            monolith.position.x = (Math.random() - 0.5) * 0.2;
+        } else {
+            monolith.position.x *= 0.9;
+        }
 
         renderer.render(scene, camera);
     }
-    run();
+    draw();
 </script>
 </body>
 </html>
