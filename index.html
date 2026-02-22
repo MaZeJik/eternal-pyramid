@@ -2,108 +2,101 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>THE ZENITH MONOLITH</title>
+    <title>THE ZENITH | FINAL ASCENSION</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@900&display=swap');
-        body { margin: 0; background: #000; overflow: hidden; cursor: none; }
+        body { margin: 0; background: #000; overflow: hidden; cursor: crosshair; }
+        
         #ui {
             position: absolute; width: 100%; height: 100%;
             display: flex; flex-direction: column; justify-content: space-between;
-            align-items: center; padding: 50px; z-index: 100; pointer-events: none;
+            align-items: center; padding: 40px; z-index: 100; pointer-events: none;
         }
+
         #counter {
-            font-family: 'Cinzel', serif; font-size: 8vw; color: #fff; margin: 0;
-            background: linear-gradient(to bottom, #fff 0%, #d4af37 100%);
+            font-family: 'Cinzel', serif; font-size: clamp(4rem, 10vw, 12rem);
+            color: #fff; margin: 0; letter-spacing: -5px; line-height: 0.9;
+            background: linear-gradient(180deg, #fff 40%, #d4af37 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 30px rgba(212,175,55,0.4));
+            filter: drop-shadow(0 0 50px rgba(212,175,55,0.4));
         }
-        #cursor-glow {
-            position: fixed; width: 400px; height: 400px;
-            background: radial-gradient(circle, rgba(212,175,55,0.15) 0%, rgba(0,0,0,0) 70%);
-            border-radius: 50%; pointer-events: none; transform: translate(-50%, -50%); z-index: 5;
-        }
+
+        .label { color: #d4af37; letter-spacing: 20px; font-size: 0.7rem; text-transform: uppercase; opacity: 0.5; }
     </style>
 </head>
 <body>
 
-<div id="cursor-glow"></div>
 <div id="ui">
-    <h1 id="counter">8,000,000,000</h1>
-    <div style="color:#d4af37; font-family:Cinzel; letter-spacing:10px; opacity:0.5">THE FINAL RELIC</div>
+    <div style="text-align:center">
+        <h1 id="counter">8,000,000,000</h1>
+        <div class="label">Living Relics Collected</div>
+    </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(18, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const camera = new THREE.PerspectiveCamera(20, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.set(0, 2, 40);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 0.8;
+    renderer.toneMappingExposure = 1.4;
     document.body.appendChild(renderer.domElement);
 
-    const group = new THREE.Group();
-    scene.add(group);
-
-    // --- OBSIDIAN STONE (Işığı Soğuran Kütle) ---
-    const pyramidGeo = new THREE.ConeGeometry(8, 12, 4);
-    const pyramidMat = new THREE.MeshStandardMaterial({ 
-        color: 0x0a0a0a, roughness: 1, metalness: 0, flatShading: true 
+    // --- ÖZEL SHADER MATERYALİ (Taş ve Altın Damarlar) ---
+    const stoneMat = new THREE.MeshStandardMaterial({ 
+        color: 0x0a0a0a,
+        roughness: 0.8,
+        metalness: 0.1,
+        flatShading: false
     });
-    const monolith = new THREE.Mesh(pyramidGeo, pyramidMat);
-    group.add(monolith);
 
-    // --- RELIEF FACES (Oymalar) ---
-    for(let i=0; i<80; i++) {
+    const worldGroup = new THREE.Group();
+    scene.add(worldGroup);
+
+    // Ana Piramit (Devasa Granit)
+    const pyramidGeo = new THREE.ConeGeometry(8, 11, 4);
+    const pyramid = new THREE.Mesh(pyramidGeo, stoneMat);
+    worldGroup.add(pyramid);
+
+    // Zirvedeki Soru İşareti
+    const qLabel = createQ();
+    qLabel.position.y = 7;
+    worldGroup.add(qLabel);
+
+    function createQ() {
+        const can = document.createElement('canvas'); can.width=1024; can.height=1024;
+        const x = can.getContext('2d');
+        x.font = "bold 600px 'Cinzel'"; x.fillStyle="#fff"; x.textAlign="center"; x.textBaseline="middle";
+        x.shadowColor="#d4af37"; x.shadowBlur=100; x.fillText("?", 512, 512);
+        const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(can), blending: THREE.AdditiveBlending }));
+        sprite.scale.set(6, 6, 1);
+        return sprite;
+    }
+
+    // --- RELIEF YÜZLER (Taşın İçinden Sızanlar) ---
+    const faces = [];
+    for(let i=0; i<100; i++) {
         const side = i % 4;
         const row = Math.floor(i / 10);
         const angle = side * (Math.PI / 2);
-        const radius = 6.8 - (row * 0.5);
+        const radius = 6.4 - (row * 0.45);
         
-        const tex = new THREE.TextureLoader().load(`https://i.pravatar.cc/100?u=${i}`);
+        const faceTex = new THREE.TextureLoader().load(`https://i.pravatar.cc/100?u=${i}`);
         const faceMat = new THREE.MeshStandardMaterial({ 
-            map: tex, transparent: true, opacity: 0.3,
-            blending: THREE.AdditiveBlending, color: 0x332211
+            map: faceTex, 
+            transparent: true, 
+            opacity: 0.4, 
+            color: 0x5a4a3a,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false
         });
-        const plane = new THREE.Mesh(new THREE.PlaneGeometry(0.7, 0.7), faceMat);
-        plane.position.set(Math.cos(angle)*radius, (row * 0.9) - 5, Math.sin(angle)*radius);
+
+        const plane = new THREE.Mesh(new THREE.PlaneGeometry(0.8, 0.8), faceMat);
+        plane.position.set(Math.cos(angle)*radius, (row * 1) - 5, Math.sin(angle)*radius);
         plane.rotation.y = angle;
-        group.add(plane);
-    }
-
-    // --- DİNAMİK MEŞALE IŞIĞI (Fareyi Takip Eder) ---
-    const torch = new THREE.PointLight(0xd4af37, 6, 40);
-    scene.add(torch);
-
-    const amb = new THREE.AmbientLight(0x000000); // Ortam ışığı yok, her yer karanlık
-    scene.add(amb);
-
-    // --- KONTROLLER ---
-    const glow = document.getElementById('cursor-glow');
-    let mX = 0, mY = 0;
-    
-    window.addEventListener('mousemove', (e) => {
-        mX = (e.clientX / window.innerWidth - 0.5) * 2;
-        mY = (e.clientY / window.innerHeight - 0.5) * 2;
-        glow.style.left = e.clientX + 'px';
-        glow.style.top = e.clientY + 'px';
-        
-        // Işığı fareye bağla
-        torch.position.x = mX * 15;
-        torch.position.y = -mY * 15 + 2;
-        torch.position.z = 10;
-    });
-
-    function animate() {
-        requestAnimationFrame(animate);
-        group.rotation.y += 0.0008; // Çok yavaş, devasa bir kütle gibi
-        group.rotation.y += mX * 0.01;
-        group.rotation.x += (mY * 0.1 - group.rotation.x) * 0.05;
-        renderer.render(scene, camera);
-    }
-    animate();
-</script>
-</body>
-</html>
+        worldGroup.add(plane);
+        faces.push({mesh: plane, phase
