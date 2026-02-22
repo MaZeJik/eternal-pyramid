@@ -2,104 +2,159 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>THE ETERNAL NEXUS | SOVEREIGN</title>
+    <title>THE ETERNAL MONOLITH</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@900&family=Montserrat:wght@100;300&display=swap');
-        body { margin: 0; background: #000; overflow: hidden; }
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@900&family=Montserrat:wght@100;400&display=swap');
         
-        #ui {
+        body { margin: 0; background: #000; overflow: hidden; cursor: crosshair; }
+        
+        /* UI: Artık süs değil, otorite */
+        #master-ui {
             position: absolute; width: 100%; height: 100%;
             display: flex; flex-direction: column; justify-content: space-between;
-            align-items: center; padding: 40px; z-index: 100; pointer-events: none;
+            align-items: center; padding: 6vh 0; z-index: 100; pointer-events: none;
         }
 
-        #counter-container { text-align: center; }
+        .counter-wrap { text-align: center; }
         #number {
-            font-family: 'Cinzel', serif; font-size: 8vw; color: #fff; margin: 0;
-            background: linear-gradient(to bottom, #fff 0%, #d4af37 100%);
+            font-family: 'Cinzel', serif; font-size: clamp(3rem, 10vw, 8rem);
+            color: #fff; margin: 0; letter-spacing: -2px;
+            background: linear-gradient(180deg, #fff 40%, #d4af37 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 30px rgba(212,175,55,0.5));
-            line-height: 0.9;
+            filter: drop-shadow(0 0 50px rgba(212,175,55,0.3));
+            line-height: 0.8;
         }
 
-        .btn-ascend {
-            pointer-events: auto; background: none; border: 1px solid #d4af37;
-            color: #d4af37; padding: 25px 100px; font-family: 'Cinzel';
-            font-size: 1.2rem; letter-spacing: 15px; cursor: pointer;
-            transition: 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+        .label { color: #d4af37; letter-spacing: 20px; font-size: 0.8rem; margin-top: 20px; text-transform: uppercase; opacity: 0.7; }
+
+        button {
+            pointer-events: auto; background: none; border: 1px solid rgba(212,175,55,0.5);
+            color: #fff; padding: 25px 100px; font-family: 'Cinzel';
+            font-size: 1.2rem; letter-spacing: 10px; cursor: pointer;
+            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); backdrop-filter: blur(10px);
         }
-        .btn-ascend:hover { background: #d4af37; color: #000; box-shadow: 0 0 100px #d4af37; letter-spacing: 20px; }
+        button:hover { background: #d4af37; color: #000; box-shadow: 0 0 100px #d4af37; }
     </style>
 </head>
 <body>
 
-<div id="ui">
-    <div id="counter-container">
+<div id="master-ui">
+    <div class="counter-wrap">
         <h1 id="number">8,000,000,000</h1>
-        <div style="color:#d4af37; letter-spacing:20px; font-size:0.8rem; margin-top:10px;">HUMANITY COLLECTIVE</div>
+        <div class="label">Eternal Nexus Index</div>
     </div>
-    <button class="btn-ascend">ASCEND</button>
+    <button>ASCEND</button>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.set(0, 0, 22);
+    const camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 2, 25);
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    const renderer = new THREE.WebGLRenderer({ antialias: true, stencil: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.toneMapping = THREE.ReinhardToneMapping;
     document.body.appendChild(renderer.domElement);
 
-    // --- MONOLİT: SİYAH MERMER VE ALTIN ---
+    // --- MONOLİT PİRAMİT (Gerçekçi Dokulu) ---
     const pyramidGroup = new THREE.Group();
     scene.add(pyramidGroup);
 
-    const pyramidGeo = new THREE.ConeGeometry(7, 10, 4);
+    const pyramidGeo = new THREE.ConeGeometry(8, 12, 4);
     const pyramidMat = new THREE.MeshStandardMaterial({ 
-        color: 0x050505, // Siyah Mermer
-        metalness: 1.0,
-        roughness: 0.1,
-        emissive: 0xd4af37,
-        emissiveIntensity: 0.05
+        color: 0x080808, metalness: 0.9, roughness: 0.05,
+        flatShading: false
     });
-    const mainPyramid = new THREE.Mesh(pyramidGeo, pyramidMat);
-    pyramidGroup.add(mainPyramid);
+    const monolith = new THREE.Mesh(pyramidGeo, pyramidMat);
+    pyramidGroup.add(monolith);
 
-    // Altın Kenar Parlaması
-    const wireframe = new THREE.Mesh(
-        pyramidGeo,
-        new THREE.MeshBasicMaterial({ color: 0xd4af37, wireframe: true, transparent: true, opacity: 0.2 })
-    );
-    pyramidGroup.add(wireframe);
-
-    // --- ZİRVE: KUTSAL IŞIK ---
-    const qLabel = createText("?");
-    qLabel.position.y = 6;
+    // Altın Soru İşareti (Zirve Enerjisi)
+    const qLabel = createQ();
+    qLabel.position.y = 7.5;
     pyramidGroup.add(qLabel);
 
-    function createText(text) {
-        const c = document.createElement('canvas'); c.width=512; c.height=512;
-        const x = c.getContext('2d');
+    function createQ() {
+        const can = document.createElement('canvas'); can.width=512; can.height=512;
+        const x = can.getContext('2d');
         x.font = "bold 400px 'Cinzel'"; x.fillStyle="#fff"; x.textAlign="center"; x.textBaseline="middle";
-        x.shadowColor="#d4af37"; x.shadowBlur=50; x.fillText(text, 256, 256);
-        const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(c) }));
-        sprite.scale.set(4, 4, 1);
+        x.shadowColor="#d4af37"; x.shadowBlur=60; x.fillText("?", 256, 256);
+        const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(can) }));
+        sprite.scale.set(5, 5, 1);
         return sprite;
     }
 
-    // --- İNSAN YÜZLERİ (SİSTEMATİK MOZAİK) ---
-    const faceCount = 100;
-    const swarm = [];
+    // --- YÜZLER DUVARI (Taşın İçine Gömülü) ---
+    const faces = [];
+    const faceCount = 64; 
+    const faceGroup = new THREE.Group();
+    pyramidGroup.add(faceGroup);
+
     for(let i=0; i<faceCount; i++) {
-        const tex = new THREE.TextureLoader().load(`https://i.pravatar.cc/150?u=${i + Math.random()}`);
-        const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, opacity: 0.6 });
-        const plane = new THREE.Mesh(new THREE.PlaneGeometry(0.6, 0.6), mat);
+        const tex = new THREE.TextureLoader().load(`https://i.pravatar.cc/100?u=${i + Math.random()}`);
+        const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, opacity: 0.5 });
+        const plane = new THREE.Mesh(new THREE.PlaneGeometry(0.8, 0.8), mat);
         
-        const angle = (i / faceCount) * Math.PI * 2;
-        const radius = 8.5 + (Math.random() * 2);
-        plane.position.set(Math.cos(angle)*radius, (Math.random()*10)-5, Math.sin(angle)*radius);
+        // Piramidin dört yüzeyine sistematik dizilim
+        const side = i % 4;
+        const row = Math.floor(i / 16);
+        const col = Math.floor((i % 16) / 4);
         
-        scene.add(plane);
-        swarm.push({ mesh: plane, angle: angle
+        const angle = side * (Math.PI / 2);
+        const radius = 5.5 - (row * 0.5);
+        plane.position.set(Math.cos(angle)*radius, (row * 1.2) - 5, Math.sin(angle)*radius);
+        plane.rotation.y = angle;
+        faceGroup.add(plane);
+        faces.push({ mesh: plane, offset: Math.random() * 10 });
+    }
+
+    // --- SİNEMATİK IŞIKLANDIRMA ---
+    const topLight = new THREE.RectAreaLight(0xd4af37, 10, 10, 10);
+    topLight.position.set(0, 15, 0);
+    topLight.lookAt(0,0,0);
+    scene.add(topLight);
+
+    const rimLight = new THREE.PointLight(0xffffff, 2, 50);
+    rimLight.position.set(10, 5, 10);
+    scene.add(rimLight);
+
+    // MOUSE ETKİLEŞİMİ (Smooth Lerp)
+    let mouseX = 0, mouseY = 0;
+    window.addEventListener('mousemove', (e) => {
+        mouseX = (e.clientX - window.innerWidth/2) * 0.0003;
+        mouseY = (e.clientY - window.innerHeight/2) * 0.0003;
+    });
+
+    // ANİMASYON DÖNGÜSÜ
+    let countVal = 8000000000;
+    function animate() {
+        requestAnimationFrame(animate);
+        
+        pyramidGroup.rotation.y += 0.002 + mouseX;
+        pyramidGroup.rotation.x += (mouseY - pyramidGroup.rotation.x) * 0.05;
+
+        // Yüzlerin "Nefes Alması"
+        faces.forEach(f => {
+            f.mesh.material.opacity = 0.3 + Math.sin(Date.now() * 0.002 + f.offset) * 0.2;
+        });
+
+        qLabel.position.y = 7.5 + Math.sin(Date.now()*0.001)*0.2;
+
+        if(Math.random() > 0.95) {
+            countVal += 1;
+            document.getElementById('number').innerText = countVal.toLocaleString('en-US');
+        }
+
+        renderer.render(scene, camera);
+    }
+    animate();
+
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+</script>
+</body>
+</html>
