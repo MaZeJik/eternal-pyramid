@@ -5,156 +5,125 @@
     <title>THE ZENITH | MASTERPIECE</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@900&display=swap');
-        body { margin: 0; background: #000; overflow: hidden; cursor: crosshair; }
+        body { margin: 0; background: #000; overflow: hidden; cursor: none; }
         
         #overlay {
             position: absolute; width: 100%; height: 100%;
             display: flex; flex-direction: column; justify-content: space-between;
             align-items: center; padding: 6vh; z-index: 1000; pointer-events: none;
-            background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.8) 100%);
+            background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.9) 100%);
         }
 
-        #zenith-counter {
-            font-family: 'Cinzel', serif; font-size: clamp(5rem, 15vw, 12rem);
-            color: #fff; margin: 0; letter-spacing: -10px; line-height: 0.8;
-            filter: drop-shadow(0 0 80px rgba(212,175,55,0.7));
-            background: linear-gradient(180deg, #fff 30%, #d4af37 100%);
+        #zenith-number {
+            font-family: 'Cinzel', serif; font-size: clamp(4rem, 14vw, 11rem);
+            color: #fff; margin: 0; letter-spacing: -12px; line-height: 0.8;
+            filter: drop-shadow(0 0 100px rgba(212,175,55,0.8));
+            background: linear-gradient(180deg, #fff 20%, #d4af37 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
 
         .master-label { 
-            color: #d4af37; letter-spacing: 30px; font-size: 0.6rem; 
-            text-transform: uppercase; margin-top: 20px; opacity: 0.4;
-            font-family: 'Cinzel'; text-indent: 30px;
+            color: #d4af37; letter-spacing: 35px; font-size: 0.6rem; 
+            text-transform: uppercase; margin-top: 30px; opacity: 0.3;
+            font-family: 'Cinzel'; text-indent: 35px;
+        }
+
+        /* Başyapıtın o kirli, ham dokusunu simüle eden Noise katmanı */
+        #noise {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            opacity: .05; z-index: 500; pointer-events: none;
+            background: url('https://media.giphy.com/media/oEI9uWUic9Zsc/giphy.gif');
         }
     </style>
 </head>
 <body>
 
+<div id="noise"></div>
 <div id="overlay">
     <div style="text-align: center;">
-        <h1 id="zenith-counter">8,000,000,000</h1>
-        <div class="master-label">The Collective Soul</div>
+        <h1 id="zenith-number">8,000,000,000</h1>
+        <div class="master-label">The Living Apex</div>
     </div>
-    <div style="color:rgba(212,175,55,0.2); font-family:Cinzel; letter-spacing:20px; font-size:0.5rem;">NO RETURN / ONLY ASCENSION</div>
+    <div style="color:rgba(212,175,55,0.1); font-family:Cinzel; letter-spacing:25px; font-size:0.5rem;">BEYOND ALL LIMITS</div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(10, window.innerWidth / window.innerHeight, 0.1, 2000);
-    camera.position.set(0, 0, 80); // İnanılmaz dar bir açı, devasa bir odak
+    // Perspektifi iyice daraltıp objeyi devleştiriyoruz
+    const camera = new THREE.PerspectiveCamera(12, window.innerWidth / window.innerHeight, 0.1, 2000);
+    camera.position.set(0, 0, 90);
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, stencil: true, powerPreference: "high-performance" });
+    const renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: "high-performance" });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 2.2;
+    renderer.toneMappingExposure = 2.5;
     document.body.appendChild(renderer.domElement);
 
-    const anchor = new THREE.Group();
-    scene.add(anchor);
+    const coreGroup = new THREE.Group();
+    scene.add(coreGroup);
 
-    // --- THE MONOLITH (Obsidian & Gold Veins) ---
-    const pyramidGeo = new THREE.ConeGeometry(8, 14, 4, 64, true);
-    const pyramidMat = new THREE.MeshStandardMaterial({ 
-        color: 0x020202, metalness: 1, roughness: 0.05, 
-        emissive: 0xd4af37, emissiveIntensity: 0.05 
-    });
-    const monolith = new THREE.Mesh(pyramidGeo, pyramidMat);
-    anchor.add(monolith);
+    // --- MONOLITH: FRACTURED SECTIONS ---
+    const matStone = new THREE.MeshStandardMaterial({ color: 0x010101, roughness: 1, metalness: 0 });
+    const matGold = new THREE.MeshStandardMaterial({ color: 0xd4af37, emissive: 0xd4af37, emissiveIntensity: 2 });
 
-    // Altın Kaburga (Energy Skeleton)
-    const wire = new THREE.Mesh(
-        pyramidGeo, 
-        new THREE.MeshBasicMaterial({ color: 0xd4af37, wireframe: true, transparent: true, opacity: 0.08 })
-    );
-    anchor.add(wire);
-
-    // --- SOUL SWARM (8 Milyar Toz) ---
-    const starGeo = new THREE.BufferGeometry();
-    const starCount = 40000;
-    const posArray = new Float32Array(starCount * 3);
-    for(let i=0; i<starCount*3; i++) posArray[i] = (Math.random() - 0.5) * 150;
-    starGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-    const starMat = new THREE.PointsMaterial({ size: 0.015, color: 0xd4af37, transparent: true, blending: THREE.AdditiveBlending });
-    const stars = new THREE.Points(starGeo, starMat);
-    scene.add(stars);
-
-    // --- RELIEFS (Kazınmış Ruhlar) ---
-    const faceGroup = new THREE.Group();
-    anchor.add(faceGroup);
-    const faces = [];
-    for(let i=0; i<150; i++) {
-        const side = i % 4;
-        const row = Math.floor(i / 15);
-        const angle = side * (Math.PI / 2);
-        const radius = 7.5 - (row * 0.6);
+    const parts = [];
+    for(let i=0; i<5; i++) {
+        const h = 3;
+        const geo = new THREE.CylinderGeometry(i*1.5, (i+1)*2.5, h, 4, 1);
+        const mesh = new THREE.Mesh(geo, matStone);
+        mesh.position.y = (2-i) * (h + 0.2);
+        mesh.rotation.y = Math.PI / 4;
         
-        const tex = new THREE.TextureLoader().load(`https://i.pravatar.cc/100?u=${i + 99}`);
-        const mat = new THREE.MeshStandardMaterial({ 
-            map: tex, transparent: true, opacity: 0.5, 
-            emissive: 0xd4af37, emissiveIntensity: 0,
-            blending: THREE.AdditiveBlending
-        });
-        const plane = new THREE.Mesh(new THREE.PlaneGeometry(0.7, 0.7), mat);
-        plane.position.set(Math.cos(angle)*radius, (row * 1.2) - 6, Math.sin(angle)*radius);
-        plane.rotation.y = angle;
-        faceGroup.add(plane);
-        faces.push({ m: plane, ph: Math.random() * 10 });
+        // İçten sızan altın enerji katmanı
+        const innerGeo = new THREE.CylinderGeometry(i*1.5-0.1, (i+1)*2.5-0.1, h-0.1, 4, 1);
+        const inner = new THREE.Mesh(innerGeo, matGold);
+        mesh.add(inner);
+        
+        coreGroup.add(mesh);
+        parts.push({m: mesh, offset: i * 0.4});
     }
 
-    // --- LIGHTING (The Divine Source) ---
-    const topLight = new THREE.PointLight(0xd4af37, 15, 100);
-    topLight.position.set(0, 20, 10);
-    scene.add(topLight);
+    // --- THE SOUL CLOUD (8 Milyar Veri Noktası) ---
+    const cloudGeo = new THREE.BufferGeometry();
+    const count = 50000;
+    const pos = new Float32Array(count * 3);
+    for(let i=0; i<count*3; i++) pos[i] = (Math.random() - 0.5) * 200;
+    cloudGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    const cloudMat = new THREE.PointsMaterial({ size: 0.02, color: 0xd4af37, transparent: true, blending: THREE.AdditiveBlending });
+    const cloud = new THREE.Points(cloudGeo, cloudMat);
+    scene.add(cloud);
 
-    // --- INTERACTION ENGINE (Ağır İvme) ---
+    // --- IŞIKLANDIRMA (The Fracture Source) ---
+    const light = new THREE.PointLight(0xd4af37, 20, 150);
+    light.position.set(0, 0, 20);
+    scene.add(light);
+
+    // --- ETKİLEŞİM (Ağır İvme ve Titreşim) ---
     let targetX = 0, targetY = 0;
-    let currentX = 0, currentY = 0;
+    let curX = 0, curY = 0;
     window.addEventListener('mousemove', (e) => {
-        targetX = (e.clientX - window.innerWidth/2) * 0.0005;
-        targetY = (e.clientY - window.innerHeight/2) * 0.0005;
+        targetX = (e.clientX - window.innerWidth/2) * 0.0004;
+        targetY = (e.clientY - window.innerHeight/2) * 0.0004;
     });
 
-    let counter = 8000000000;
-    function render() {
-        requestAnimationFrame(render);
+    function animate() {
+        requestAnimationFrame(animate);
         
-        // Kinematik Ağırlık Sistemi
-        currentX += (targetX - currentX) * 0.02; 
-        currentY += (targetY - currentY) * 0.02;
+        curX += (targetX - curX) * 0.01;
+        curY += (targetY - curY) * 0.01;
         
-        anchor.rotation.y += 0.0015 + currentX;
-        anchor.rotation.x += (currentY - anchor.rotation.x) * 0.05;
+        coreGroup.rotation.y += 0.001 + curX;
+        coreGroup.rotation.x += (curY - coreGroup.rotation.x) * 0.02;
 
-        // Monolith Nabız ve Deformasyon
         const time = Date.now() * 0.001;
-        monolith.scale.setScalar(1 + Math.sin(time) * 0.005);
         
-        // Yıldızların Sarmal Hareketi
-        stars.rotation.y -= 0.0003;
-        stars.rotation.z += 0.0001;
-
-        // Yüzlerin Işık Sızdırması
-        faces.forEach(f => {
-            f.m.material.emissiveIntensity = 0.5 + Math.sin(time + f.ph) * 0.5;
+        // Parçaların manyetik salınımı
+        parts.forEach(p => {
+            p.m.position.y += Math.sin(time + p.offset) * 0.005;
+            p.m.rotation.y += Math.cos(time + p.offset) * 0.002;
         });
 
-        // Sayaç Güncelleme
-        if(Math.random() > 0.98) {
-            counter += 1;
-            document.getElementById('zenith-counter').innerText = counter.toLocaleString('en-US');
-        }
-
-        renderer.render(scene, camera);
-    }
-    render();
-
-    window.addEventListener('resize', () => {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-    });
-</script>
-</body>
-</html>
+        // Veri bulutunun merkeze çekilmesi (Black Hole Effect)
+        cloud.rotation.y += 0.0002;
+        cloud.scale.setScalar(1 + Math.sin(time * 0.5) *
