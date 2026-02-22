@@ -3,115 +3,140 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THE ETERNAL PYRAMID | LIVE</title>
+    <title>THE ETERNAL PYRAMID | HUMANITY</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Montserrat:wght@300&display=swap');
         body { margin: 0; background: #000; overflow: hidden; font-family: 'Montserrat', sans-serif; }
-        #ui { position: absolute; top: 0; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 5vh 0; pointer-events: none; z-index: 10; }
-        h1 { font-family: 'Cinzel', serif; font-size: 3rem; letter-spacing: 15px; color: #d4af37; margin: 0; text-shadow: 0 0 20px rgba(0,0,0,1); }
-        button { pointer-events: auto; background: rgba(0,0,0,0.8); color: #d4af37; border: 1px solid #d4af37; padding: 15px 40px; cursor: pointer; letter-spacing: 3px; transition: 0.3s; }
-        button:hover { background: #d4af37; color: #000; }
+        
+        #ui { 
+            position: absolute; top: 0; width: 100%; height: 100%; 
+            display: flex; flex-direction: column; justify-content: space-between; 
+            align-items: center; padding: 5vh 0; pointer-events: none; z-index: 10;
+        }
+
+        h1 { 
+            font-family: 'Cinzel', serif; font-size: clamp(2rem, 5vw, 3.5rem); 
+            letter-spacing: 15px; color: #d4af37; margin: 0; 
+            text-shadow: 0 0 30px rgba(0,0,0,1);
+            background: linear-gradient(to bottom, #fff, #d4af37);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        .cta-container { pointer-events: auto; }
+        button { 
+            background: rgba(0,0,0,0.7); color: #d4af37; border: 1px solid #d4af37; 
+            padding: 20px 50px; cursor: pointer; letter-spacing: 5px; 
+            transition: 0.5s; font-family: 'Montserrat', sans-serif;
+            backdrop-filter: blur(10px);
+        }
+        button:hover { background: #d4af37; color: #000; box-shadow: 0 0 50px rgba(212,175,55,0.5); }
     </style>
 </head>
 <body>
 
     <div id="ui">
         <h1>THE ETERNAL PYRAMID</h1>
-        <button onclick="alert('Ödeme Sistemi ve Fotoğraf Yükleme Yakında!')">JOIN THE MONUMENT — 1 USD</button>
+        <div class="cta-container">
+            <button onclick="alert('Digital Soul Integration Starting...')">JOIN THE GLOBAL MONUMENT</button>
+        </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.set(0, -1, 12);
+        camera.position.set(0, -2, 12);
         camera.lookAt(0, 4, 0);
 
         const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setClearColor(0x050505);
         document.body.appendChild(renderer.domElement);
 
-        // --- YAŞAYAN MOZAİK SİSTEMİ ---
-        const gridSize = 16; 
-        const texSize = 1024;
+        // --- GERÇEKÇİ DOKU VE YÜZ SİSTEMİ ---
+        const texSize = 2048; // Yüksek çözünürlük
         const canvas = document.createElement('canvas');
         canvas.width = texSize; canvas.height = texSize;
         const ctx = canvas.getContext('2d');
         const texture = new THREE.CanvasTexture(canvas);
 
-        function updateFaces() {
-            // Arka plan: Gerçek piramit taşı rengi
-            ctx.fillStyle = '#bfa980';
-            ctx.fillRect(0, 0, texSize, texSize);
+        // Rastgele yüzler için bir havuz (Placeholder servisinden)
+        const faceImages = [];
+        for(let i=0; i<20; i++) {
+            const img = new Image();
+            img.crossOrigin = "Anonymous";
+            img.src = `https://i.pravatar.cc/150?u=${Math.random()}`;
+            faceImages.push(img);
+        }
 
-            const cellSize = texSize / gridSize;
-            for(let i=0; i<gridSize; i++) {
-                for(let j=0; j<gridSize/2; j++) { // Sadece alt yarısı yüzlerle dolsun
-                    // Rastgele insan yüzlerini simüle eden renkli kutucuklar/placeholderlar
-                    const r = Math.random();
-                    if(r > 0.3) {
-                        ctx.fillStyle = `hsl(${Math.random()*360}, 30%, 40%)`;
-                        ctx.fillRect(i*cellSize, (gridSize-1-j)*cellSize, cellSize-2, cellSize-2);
-                        
-                        // "Yüz" hissi veren küçük detaylar
-                        ctx.fillStyle = 'rgba(255,255,255,0.1)';
-                        ctx.fillRect(i*cellSize + 5, (gridSize-1-j)*cellSize + 5, cellSize/2, cellSize/2);
+        function drawPyramidTexture() {
+            // Üst Kısım: Gerçek Taş Dokusu
+            ctx.fillStyle = '#3d2b1f'; // Koyu kumtaşı
+            ctx.fillRect(0, 0, texSize, texSize);
+            
+            // Alt Kısım: İnsan Yüzleri Mozaiği
+            const rows = 12;
+            const cols = 24;
+            const cellW = texSize / cols;
+            const cellH = (texSize / 2) / rows;
+
+            for(let r=0; r<rows; r++) {
+                for(let c=0; c<cols; c++) {
+                    const randomImg = faceImages[Math.floor(Math.random() * faceImages.length)];
+                    if(randomImg.complete) {
+                        ctx.drawImage(randomImg, c * cellW, (texSize/2) + (r * cellH), cellW - 1, cellH - 1);
                     }
+                    // Üzerine hafif bir "eskimiş taş" filtresi
+                    ctx.fillStyle = 'rgba(61, 43, 31, 0.3)';
+                    ctx.fillRect(c * cellW, (texSize/2) + (r * cellH), cellW, cellH);
                 }
             }
             texture.needsUpdate = true;
         }
 
-        // --- PİRAMİT ---
+        // --- PİRAMİT GÖVDESİ ---
         const geometry = new THREE.ConeGeometry(6, 9, 4);
         const material = new THREE.MeshStandardMaterial({ 
-            map: texture, 
-            bumpMap: texture, 
-            bumpScale: 0.05,
-            metalness: 0.2, 
-            roughness: 0.8 
+            map: texture,
+            roughness: 0.9,
+            metalness: 0.2
         });
         const pyramid = new THREE.Mesh(geometry, material);
         scene.add(pyramid);
 
-        // --- ALTIN SORU İŞARETİ ---
+        // --- ALTIN SORU İŞARETİ (ZİRVE) ---
         const qCanvas = document.createElement('canvas');
-        qCanvas.width = 256; qCanvas.height = 256;
+        qCanvas.width = 512; qCanvas.height = 512;
         const qCtx = qCanvas.getContext('2d');
-        qCtx.font = "bold 180px 'Cinzel', serif";
+        qCtx.font = "bold 350px 'Cinzel', serif";
         qCtx.fillStyle = "#FFD700";
         qCtx.textAlign = "center";
         qCtx.textBaseline = "middle";
-        qCtx.fillText("?", 128, 128);
+        qCtx.shadowColor = "#FFD700";
+        qCtx.shadowBlur = 50;
+        qCtx.fillText("?", 256, 256);
+
         const qTexture = new THREE.CanvasTexture(qCanvas);
-        const qSprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: qTexture }));
-        qSprite.position.y = 5.5;
-        qSprite.scale.set(3, 3, 1);
+        const qSprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: qTexture, transparent: true }));
+        qSprite.position.y = 5.8;
+        qSprite.scale.set(3.5, 3.5, 1);
         scene.add(qSprite);
 
-        // IŞIKLAR
-        const sun = new THREE.DirectionalLight(0xffffff, 1.2);
-        sun.position.set(5, 10, 7);
-        scene.add(sun);
-        scene.add(new THREE.AmbientLight(0x444444));
+        // IŞIKLANDIRMA (Sinematik)
+        const light1 = new THREE.PointLight(0xffffff, 1.5, 50);
+        light1.position.set(10, 10, 10);
+        scene.add(light1);
+        const light2 = new THREE.AmbientLight(0x333333);
+        scene.add(light2);
 
-        function animate() {
+        // --- ANİMASYON ---
+        let lastUpdate = 0;
+        function animate(time) {
             requestAnimationFrame(animate);
-            pyramid.rotation.y += 0.002;
             
-            // Yüzlerin sürekli değişmesi (Her 30 karede bir rastgele güncelleme)
-            if(Math.random() > 0.95) updateFaces();
+            pyramid.rotation.y += 0.003;
 
-            renderer.render(scene, camera);
-        }
-        updateFaces();
-        animate();
-
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        });
-    </script>
-</body>
-</html>
+            // YÜZLERİN DÖNGÜSÜ: Her 2 saniyede bir mozaik yenilenir
+            if (time - lastUpdate > 2000) {
+                // Yeni yüzleri yükle
+                face
