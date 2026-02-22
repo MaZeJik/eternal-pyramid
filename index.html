@@ -2,136 +2,124 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>THE NEXUS MONUMENT</title>
+    <title>NEXUS PRIME | THE ASCENSION</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@900&family=Montserrat:wght@100;300&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@900&family=Montserrat:wght@100&display=swap');
         body { margin: 0; background: #000; overflow: hidden; }
-        
-        /* UI: Ultra Minimalist & Luxury */
         #ui {
             position: absolute; width: 100%; height: 100%;
-            display: flex; flex-direction: column; justify-content: space-between;
-            align-items: center; padding: 60px 0; z-index: 10; pointer-events: none;
+            display: flex; flex-direction: column; justify-content: center;
+            align-items: center; z-index: 10; pointer-events: none;
         }
-
-        #number {
-            font-family: 'Cinzel', serif; font-size: 5.5rem; color: #fff; margin: 0;
-            background: linear-gradient(180deg, #fff 0%, #d4af37 100%);
+        #counter {
+            font-family: 'Cinzel', serif; font-size: 7vw; color: #fff;
+            background: linear-gradient(to bottom, #fff, #d4af37);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 40px rgba(212,175,55,0.3));
+            filter: drop-shadow(0 0 50px rgba(212,175,55,0.4));
+            margin-bottom: 20px;
         }
-
-        .btn-nexus {
+        .btn-prime {
             pointer-events: auto; background: none; border: 1px solid #d4af37;
-            color: #d4af37; padding: 25px 80px; font-family: 'Cinzel';
-            font-size: 1.2rem; letter-spacing: 10px; cursor: pointer;
-            transition: 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            color: #d4af37; padding: 20px 80px; font-family: 'Cinzel';
+            letter-spacing: 15px; cursor: pointer; transition: 1s cubic-bezier(0.1, 1, 0.1, 1);
         }
-        .btn-nexus:hover { background: #d4af37; color: #000; letter-spacing: 15px; box-shadow: 0 0 100px #d4af37; }
+        .btn-prime:hover { background: #d4af37; color: #000; box-shadow: 0 0 150px #d4af37; transform: scale(1.1); }
     </style>
 </head>
 <body>
 
 <div id="ui">
-    <h1 id="number">8,000,000,000</h1>
-    <button class="btn-nexus" onclick="console.log('Ascending...')">ASCEND</button>
+    <h1 id="counter">8,000,000,000</h1>
+    <button class="btn-prime" onclick="location.reload()">REGENERATE</button>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<script id="vertexShader" type="x-shader/x-vertex">
+    varying vec2 vUv;
+    varying vec3 vPosition;
+    void main() {
+        vUv = uv;
+        vPosition = position;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }
+</script>
+
+<script id="fragmentShader" type="x-shader/x-fragment">
+    varying vec2 vUv;
+    varying vec3 vPosition;
+    uniform float uTime;
+    
+    void main() {
+        // Altın ve taş karışımı pürüzlü doku hesaplaması
+        float noise = fract(sin(dot(vUv ,vec2(12.9898,78.233))) * 43758.5453);
+        vec3 stoneColor = vec3(0.1, 0.08, 0.05);
+        vec3 goldColor = vec3(0.83, 0.68, 0.21);
+        
+        // Piramidin kenarlarında parlayan altın damarlar
+        float glow = smoothstep(0.4, 0.5, sin(vPosition.y * 10.0 + uTime));
+        vec3 finalColor = mix(stoneColor, goldColor, glow * 0.3 + noise * 0.1);
+        
+        gl_FragColor = vec4(finalColor, 1.0);
+    }
+</script>
+
 <script>
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.set(0, 5, 25);
+    const camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 4, 25);
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, stencil: true });
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.shadowMap.enabled = true; // Gölge desteği!
     document.body.appendChild(renderer.domElement);
 
-    // --- GERÇEKÇİ TAŞ DOKUSU VE PİRAMİT ---
-    const pyramidGroup = new THREE.Group();
-    scene.add(pyramidGroup);
-
-    // Özel Shader benzeri materyal (Gerçekçi Taş Hissi)
-    const stoneMaterial = new THREE.MeshStandardMaterial({ 
-        color: 0x3d2b1f, 
-        roughness: 0.9, 
-        metalness: 0.1,
-        flatShading: true // Taş blokları daha net görünür
+    // --- ÖZEL SHADER PİRAMİT ---
+    const geometry = new THREE.ConeGeometry(8, 12, 4);
+    const material = new THREE.ShaderMaterial({
+        vertexShader: document.getElementById('vertexShader').textContent,
+        fragmentShader: document.getElementById('fragmentShader').textContent,
+        uniforms: { uTime: { value: 0.0 } }
     });
+    const pyramid = new THREE.Mesh(geometry, material);
+    scene.add(pyramid);
 
-    const pyramid = new THREE.Mesh(new THREE.ConeGeometry(8, 11, 4), stoneMaterial);
-    pyramid.castShadow = true;
-    pyramid.receiveShadow = true;
-    pyramidGroup.add(pyramid);
+    // --- YÜZLER SÜRÜSÜ (BİNLERCE NOKTA) ---
+    const pointsGeo = new THREE.BufferGeometry();
+    const count = 15000;
+    const pos = new Float32Array(count * 3);
+    for(let i=0; i<count*3; i++) pos[i] = (Math.random()-0.5)*150;
+    pointsGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    const pointsMat = new THREE.PointsMaterial({ size: 0.04, color: 0xd4af37, transparent: true, opacity: 0.5 });
+    const points = new THREE.Points(pointsGeo, pointsMat);
+    scene.add(points);
 
-    // --- ALTIN ZİRVE (YÜKSEK ÇÖZÜNÜRLÜK) ---
-    const qLabel = createHighResQ();
-    qLabel.position.y = 6.8;
-    pyramidGroup.add(qLabel);
+    // --- ALTIN SORU İŞARETİ (ZİRVE) ---
+    const qLabel = createQ();
+    qLabel.position.y = 7;
+    scene.add(qLabel);
 
-    function createHighResQ() {
-        const c = document.createElement('canvas'); c.width=1024; c.height=1024;
+    function createQ() {
+        const c = document.createElement('canvas'); c.width=512; c.height=512;
         const x = c.getContext('2d');
-        x.font = "bold 600px 'Cinzel'"; x.fillStyle="#fff"; x.textAlign="center"; x.textBaseline="middle";
-        x.shadowColor="#d4af37"; x.shadowBlur=60; x.fillText("?", 512, 512);
-        const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(c), transparent: true }));
+        x.font = "bold 400px 'Cinzel'"; x.fillStyle="#fff"; x.textAlign="center"; x.textBaseline="middle";
+        x.shadowColor="#d4af37"; x.shadowBlur=60; x.fillText("?", 256, 256);
+        const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(c) }));
         sprite.scale.set(5, 5, 1);
         return sprite;
     }
 
-    // --- DİNAMİK YÜZ SİSTEMİ (STABİL) ---
-    const faceCount = 100; // Daha fazla yüz, daha fazla heybet
-    const faces = [];
-    for(let i=0; i<faceCount; i++) {
-        const tex = new THREE.TextureLoader().load(`https://i.pravatar.cc/150?u=${i}`);
-        const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, opacity: 0.6 });
-        const mesh = new THREE.Mesh(new THREE.PlaneGeometry(0.7, 0.7), mat);
-        
-        const angle = (i / faceCount) * Math.PI * 2;
-        const radius = 9 + Math.random() * 2;
-        mesh.position.set(Math.cos(angle)*radius, (Math.random()*6)-3, Math.sin(angle)*radius);
-        scene.add(mesh);
-        faces.push({ mesh, angle, speed: 0.001 + Math.random()*0.003 });
-    }
-
-    // --- SİNEMATİK IŞIKLANDIRMA ---
-    const spotLight = new THREE.SpotLight(0xd4af37, 2.5);
-    spotLight.position.set(0, 15, 10);
-    spotLight.castShadow = true;
-    scene.add(spotLight);
-    scene.add(new THREE.AmbientLight(0x222222));
-
-    // MOUSE ETKİLEŞİMİ (Hatasız)
-    let targetX = 0, targetY = 0;
-    window.addEventListener('mousemove', (e) => {
-        targetX = (e.clientX - window.innerWidth/2) * 0.0002;
-        targetY = (e.clientY - window.innerHeight/2) * 0.0002;
-    });
-
-    let countVal = 8000000000;
+    // ANİMASYON
+    let time = 0;
     function animate() {
         requestAnimationFrame(animate);
+        time += 0.02;
+        material.uniforms.uTime.value = time;
         
-        pyramidGroup.rotation.y += 0.002 + targetX;
-        pyramidGroup.rotation.x += targetY;
-
-        // Yüzlerin süzülüşü (Billboard efekti)
-        faces.forEach(f => {
-            f.angle += f.speed;
-            f.mesh.position.x = Math.cos(f.angle) * 10;
-            f.mesh.position.z = Math.sin(f.angle) * 10;
-            f.mesh.lookAt(camera.position);
-        });
-
-        qLabel.position.y = 6.8 + Math.sin(Date.now()*0.001)*0.2;
+        pyramid.rotation.y += 0.005;
+        points.rotation.y += 0.0002;
+        qLabel.position.y = 7 + Math.sin(time)*0.2;
         
-        if(Math.random() > 0.9) {
-            countVal += 1;
-            document.getElementById('number').innerText = countVal.toLocaleString('en-US');
-        }
-
         renderer.render(scene, camera);
     }
     animate();
