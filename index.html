@@ -2,86 +2,159 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>NEXUS | BEYOND THE LIMIT</title>
+    <title>THE ZENITH | MASTERPIECE</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@900&family=Montserrat:wght@100&display=swap');
-        body { margin: 0; background: #000; overflow: hidden; cursor: none; }
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@900&display=swap');
+        body { margin: 0; background: #000; overflow: hidden; cursor: crosshair; }
         
-        #ui-layer {
+        #overlay {
             position: absolute; width: 100%; height: 100%;
             display: flex; flex-direction: column; justify-content: space-between;
-            align-items: center; padding: 40px; z-index: 1000; pointer-events: none;
+            align-items: center; padding: 6vh; z-index: 1000; pointer-events: none;
+            background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.8) 100%);
         }
 
-        #counter-master {
-            font-family: 'Cinzel', serif; font-size: 10vw; color: #fff;
-            background: linear-gradient(180deg, #fff 20%, #d4af37 100%);
+        #zenith-counter {
+            font-family: 'Cinzel', serif; font-size: clamp(5rem, 15vw, 12rem);
+            color: #fff; margin: 0; letter-spacing: -10px; line-height: 0.8;
+            filter: drop-shadow(0 0 80px rgba(212,175,55,0.7));
+            background: linear-gradient(180deg, #fff 30%, #d4af37 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 100px rgba(212,175,55,0.6));
-            letter-spacing: -8px; line-height: 0.8;
         }
 
-        .status-bar {
-            width: 300px; height: 1px; background: rgba(212,175,55,0.3);
-            position: relative; margin-top: 20px;
-        }
-        .status-fill {
-            width: 80%; height: 100%; background: #d4af37;
-            box-shadow: 0 0 20px #d4af37;
+        .master-label { 
+            color: #d4af37; letter-spacing: 30px; font-size: 0.6rem; 
+            text-transform: uppercase; margin-top: 20px; opacity: 0.4;
+            font-family: 'Cinzel'; text-indent: 30px;
         }
     </style>
 </head>
 <body>
 
-<div id="ui-layer">
+<div id="overlay">
     <div style="text-align: center;">
-        <h1 id="counter-master">8,000,000,000</h1>
-        <div class="status-bar"><div class="status-fill"></div></div>
-        <div style="color:#d4af37; font-family:Cinzel; letter-spacing:10px; font-size:0.6rem; margin-top:10px;">QUANTUM ASCENSION ACTIVE</div>
+        <h1 id="zenith-counter">8,000,000,000</h1>
+        <div class="master-label">The Collective Soul</div>
     </div>
-    <div style="color:rgba(255,255,255,0.2); font-family:Montserrat; letter-spacing:20px; font-size:0.5rem;">LIMITLESS / BEYOND</div>
+    <div style="color:rgba(212,175,55,0.2); font-family:Cinzel; letter-spacing:20px; font-size:0.5rem;">NO RETURN / ONLY ASCENSION</div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(12, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.set(0, 0, 60);
+    const camera = new THREE.PerspectiveCamera(10, window.innerWidth / window.innerHeight, 0.1, 2000);
+    camera.position.set(0, 0, 80); // İnanılmaz dar bir açı, devasa bir odak
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
+    const renderer = new THREE.WebGLRenderer({ antialias: true, stencil: true, powerPreference: "high-performance" });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.5;
+    renderer.toneMappingExposure = 2.2;
     document.body.appendChild(renderer.domElement);
 
-    const masterGroup = new THREE.Group();
-    scene.add(masterGroup);
+    const anchor = new THREE.Group();
+    scene.add(anchor);
 
-    // --- PARÇALANMIŞ MONOLİT (Kinetik Parçalar) ---
+    // --- THE MONOLITH (Obsidian & Gold Veins) ---
+    const pyramidGeo = new THREE.ConeGeometry(8, 14, 4, 64, true);
     const pyramidMat = new THREE.MeshStandardMaterial({ 
-        color: 0x050505, roughness: 0.1, metalness: 1, flatShading: true 
+        color: 0x020202, metalness: 1, roughness: 0.05, 
+        emissive: 0xd4af37, emissiveIntensity: 0.05 
     });
+    const monolith = new THREE.Mesh(pyramidGeo, pyramidMat);
+    anchor.add(monolith);
 
-    const segments = [];
-    for(let i=0; i<4; i++) { // Piramidi 4 ana dilime bölüyoruz
-        const geo = new THREE.ConeGeometry(8, 3, 4, 1, false, (i * Math.PI)/2, Math.PI/2);
-        const part = new THREE.Mesh(geo, pyramidMat);
-        part.position.y = (i * 3) - 4.5;
-        masterGroup.add(part);
-        segments.push({ mesh: part, offset: i * 0.5 });
+    // Altın Kaburga (Energy Skeleton)
+    const wire = new THREE.Mesh(
+        pyramidGeo, 
+        new THREE.MeshBasicMaterial({ color: 0xd4af37, wireframe: true, transparent: true, opacity: 0.08 })
+    );
+    anchor.add(wire);
+
+    // --- SOUL SWARM (8 Milyar Toz) ---
+    const starGeo = new THREE.BufferGeometry();
+    const starCount = 40000;
+    const posArray = new Float32Array(starCount * 3);
+    for(let i=0; i<starCount*3; i++) posArray[i] = (Math.random() - 0.5) * 150;
+    starGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+    const starMat = new THREE.PointsMaterial({ size: 0.015, color: 0xd4af37, transparent: true, blending: THREE.AdditiveBlending });
+    const stars = new THREE.Points(starGeo, starMat);
+    scene.add(stars);
+
+    // --- RELIEFS (Kazınmış Ruhlar) ---
+    const faceGroup = new THREE.Group();
+    anchor.add(faceGroup);
+    const faces = [];
+    for(let i=0; i<150; i++) {
+        const side = i % 4;
+        const row = Math.floor(i / 15);
+        const angle = side * (Math.PI / 2);
+        const radius = 7.5 - (row * 0.6);
+        
+        const tex = new THREE.TextureLoader().load(`https://i.pravatar.cc/100?u=${i + 99}`);
+        const mat = new THREE.MeshStandardMaterial({ 
+            map: tex, transparent: true, opacity: 0.5, 
+            emissive: 0xd4af37, emissiveIntensity: 0,
+            blending: THREE.AdditiveBlending
+        });
+        const plane = new THREE.Mesh(new THREE.PlaneGeometry(0.7, 0.7), mat);
+        plane.position.set(Math.cos(angle)*radius, (row * 1.2) - 6, Math.sin(angle)*radius);
+        plane.rotation.y = angle;
+        faceGroup.add(plane);
+        faces.push({ m: plane, ph: Math.random() * 10 });
     }
 
-    // --- VERİ BULUTU (8 Milyar İnsan Tozu) ---
-    const particlesGeo = new THREE.BufferGeometry();
-    const pCount = 20000;
-    const posArray = new Float32Array(pCount * 3);
-    for(let i=0; i<pCount*3; i++) posArray[i] = (Math.random() - 0.5) * 100;
-    particlesGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-    const particlesMat = new THREE.PointsMaterial({ size: 0.02, color: 0xd4af37, transparent: true, opacity: 0.4 });
-    const particleSystem = new THREE.Points(particlesGeo, particlesMat);
-    scene.add(particleSystem);
-
-    // --- IŞIK (Karanlığı Delen Altın) ---
-    const topLight = new THREE.RectAreaLight(0xd4af37, 20, 10, 10);
-    topLight.position.set(0, 20, 0);
+    // --- LIGHTING (The Divine Source) ---
+    const topLight = new THREE.PointLight(0xd4af37, 15, 100);
+    topLight.position.set(0, 20, 10);
     scene.add(topLight);
+
+    // --- INTERACTION ENGINE (Ağır İvme) ---
+    let targetX = 0, targetY = 0;
+    let currentX = 0, currentY = 0;
+    window.addEventListener('mousemove', (e) => {
+        targetX = (e.clientX - window.innerWidth/2) * 0.0005;
+        targetY = (e.clientY - window.innerHeight/2) * 0.0005;
+    });
+
+    let counter = 8000000000;
+    function render() {
+        requestAnimationFrame(render);
+        
+        // Kinematik Ağırlık Sistemi
+        currentX += (targetX - currentX) * 0.02; 
+        currentY += (targetY - currentY) * 0.02;
+        
+        anchor.rotation.y += 0.0015 + currentX;
+        anchor.rotation.x += (currentY - anchor.rotation.x) * 0.05;
+
+        // Monolith Nabız ve Deformasyon
+        const time = Date.now() * 0.001;
+        monolith.scale.setScalar(1 + Math.sin(time) * 0.005);
+        
+        // Yıldızların Sarmal Hareketi
+        stars.rotation.y -= 0.0003;
+        stars.rotation.z += 0.0001;
+
+        // Yüzlerin Işık Sızdırması
+        faces.forEach(f => {
+            f.m.material.emissiveIntensity = 0.5 + Math.sin(time + f.ph) * 0.5;
+        });
+
+        // Sayaç Güncelleme
+        if(Math.random() > 0.98) {
+            counter += 1;
+            document.getElementById('zenith-counter').innerText = counter.toLocaleString('en-US');
+        }
+
+        renderer.render(scene, camera);
+    }
+    render();
+
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+</script>
+</body>
+</html>
