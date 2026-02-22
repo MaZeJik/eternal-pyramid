@@ -3,111 +3,127 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Eternal Pyramid | Adını Sonsuzluğa Kazı</title>
+    <title>AETHER: The Eternal Monument</title>
     <style>
-        /* GENEL TASARIM: Siyah ve Altın */
-        body { margin: 0; background-color: #000; color: #ffd700; font-family: 'Courier New', monospace; text-align: center; overflow: hidden; }
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap');
+
+        body { margin: 0; background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%); overflow: hidden; font-family: 'Orbitron', sans-serif; }
         
-        /* ARAYÜZ (UI) */
-        #ui { position: absolute; top: 5%; width: 100%; z-index: 10; pointer-events: none; }
-        h1 { font-size: 2.5rem; letter-spacing: 5px; text-shadow: 0 0 15px rgba(255, 215, 0, 0.6); margin-bottom: 5px; }
-        p { color: #888; font-size: 1rem; }
-        
-        /* BUTON TASARIMI */
-        button { 
-            pointer-events: auto; 
-            background: linear-gradient(45deg, #ffd700, #b8860b); 
-            color: black; 
-            padding: 18px 40px; 
-            border: none; 
-            font-weight: bold; 
-            cursor: pointer; 
-            border-radius: 50px; 
-            font-size: 1.2rem; 
-            box-shadow: 0 0 25px rgba(255, 215, 0, 0.3); 
-            transition: 0.3s;
-            margin-top: 20px;
+        /* UI Güzelleştirme */
+        #ui { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            display: flex; flex-direction: column; justify-content: space-between;
+            align-items: center; padding: 40px 0; pointer-events: none; z-index: 10;
         }
-        button:hover { transform: scale(1.1); box-shadow: 0 0 40px rgba(255, 215, 0, 0.6); }
+
+        h1 { 
+            font-size: clamp(2rem, 8vw, 4.5rem); font-weight: 900; color: #fff;
+            letter-spacing: 15px; margin: 0; text-shadow: 0 0 30px rgba(255,215,0,0.5);
+            background: linear-gradient(to bottom, #fff, #ffd700);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        .cta-container { pointer-events: auto; margin-bottom: 50px; }
         
-        /* İSTATİSTİKLER */
-        #stats { position: absolute; bottom: 20px; left: 20px; color: #0f0; font-size: 0.8rem; text-shadow: 0 0 5px #0f0; text-align: left; }
+        button {
+            background: rgba(0,0,0,0.8); color: #ffd700; border: 2px solid #ffd700;
+            padding: 20px 50px; font-size: 1.2rem; font-family: 'Orbitron', sans-serif;
+            cursor: pointer; transition: 0.5s; letter-spacing: 3px; border-radius: 0;
+            box-shadow: 0 0 20px rgba(255,215,0,0.2);
+        }
+
+        button:hover {
+            background: #ffd700; color: #000; box-shadow: 0 0 50px #ffd700;
+            transform: translateY(-5px);
+        }
+
+        #stats { 
+            position: absolute; bottom: 30px; left: 30px; color: rgba(255,215,0,0.6);
+            font-size: 0.7rem; text-align: left; line-height: 2;
+        }
     </style>
 </head>
 <body>
 
     <div id="ui">
-        <h1>THE ETERNAL PYRAMID</h1>
-        <p>Sonsuzlukta bir yerin olsun. Ücret: 1 USD (SOL)</p>
-        <button onclick="payWithSolana()">TUĞLA SATIN AL</button>
+        <h1>AETHER</h1>
+        <div class="cta-container">
+            <button onclick="console.log('Initiating...')">CLAIM YOUR PIXEL</button>
+        </div>
     </div>
 
     <div id="stats">
-        CANLI DURUM:<br>
-        TOPLAM BAĞIŞ: $1,876,420<br>
-        DOLU TUĞLA: 1,420,901
+        ESTABLISHED: 2026<br>
+        GLOBAL REACH: 8.0B<br>
+        STATUS: ONLINE
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
-        // --- 3D SAHNE KURULUMU ---
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(window.devicePixelRatio);
         document.body.appendChild(renderer.domElement);
 
-        // --- IŞIKLANDIRMA (Siyah taşların parlaması için) ---
-        const light = new THREE.PointLight(0xffffff, 1.5, 100);
-        light.position.set(10, 10, 10);
-        scene.add(light);
-        scene.add(new THREE.AmbientLight(0x404040, 2));
+        // YILDIZLAR (Sonsuz Uzay Hissi)
+        const starGeo = new THREE.BufferGeometry();
+        const starCount = 3000;
+        const posArray = new Float32Array(starCount * 3);
+        for(let i=0; i < starCount * 3; i++) {
+            posArray[i] = (Math.random() - 0.5) * 100;
+        }
+        starGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        const starMat = new THREE.PointsMaterial({ size: 0.05, color: 0xffffff });
+        const stars = new THREE.Points(starGeo, starMat);
+        scene.add(stars);
 
-        // --- PİRAMİT GÖVDESİ (Siyah Parlak Taşlar) ---
+        // PİRAMİT (Obsidyen / Cam Görünümü)
         const geometry = new THREE.ConeGeometry(5, 8, 4);
-        const material = new THREE.MeshStandardMaterial({ 
-            color: 0x111111, 
-            roughness: 0.1, 
-            metalness: 0.8,
-            flatShading: true 
+        const material = new THREE.MeshPhysicalMaterial({ 
+            color: 0x050505, metalness: 0.9, roughness: 0.05,
+            transmission: 0.5, thickness: 2, transparent: true
         });
         const pyramid = new THREE.Mesh(geometry, material);
         scene.add(pyramid);
 
-        // Altın Kenar Çizgileri
-        const edges = new THREE.EdgesGeometry(geometry);
-        const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0xffd700, transparent: true, opacity: 0.2 }));
-        pyramid.add(line);
+        // ALTIN HALKA (Piramidin Etrafında Dönen Şerit)
+        const ringGeo = new THREE.TorusGeometry(7, 0.03, 16, 100);
+        const ringMat = new THREE.MeshStandardMaterial({ color: 0xffd700, emissive: 0xffd700, emissiveIntensity: 2 });
+        const ring = new THREE.Mesh(ringGeo, ringMat);
+        ring.rotation.x = Math.PI / 2.5;
+        scene.add(ring);
 
-        // --- ALTIN ZİRVE ---
-        const tipGeo = new THREE.ConeGeometry(1, 1.6, 4);
-        const tipMat = new THREE.MeshStandardMaterial({ color: 0xffd700, metalness: 1, roughness: 0.1 });
-        const tip = new THREE.Mesh(tipGeo, tipMat);
-        tip.position.y = 4.8;
-        pyramid.add(tip);
+        // IŞIKLAR
+        const mainLight = new THREE.PointLight(0xffd700, 2, 50);
+        mainLight.position.set(5, 5, 5);
+        scene.add(mainLight);
+        
+        const blueLight = new THREE.PointLight(0x00ffff, 1, 50);
+        blueLight.position.set(-5, -5, 2);
+        scene.add(blueLight);
 
-        camera.position.z = 12;
+        camera.position.z = 15;
 
-        // --- ANİMASYON DÖNGÜSÜ ---
+        // ANİMASYON
         function animate() {
             requestAnimationFrame(animate);
-            pyramid.rotation.y += 0.005; 
+            pyramid.rotation.y += 0.003;
+            ring.rotation.z -= 0.01;
+            stars.rotation.y += 0.0005;
+            
+            // Nefes alma efekti (Işık hafifçe parlar söner)
+            mainLight.intensity = 1.5 + Math.sin(Date.now() * 0.002) * 0.5;
+            
             renderer.render(scene, camera);
         }
         animate();
 
-        // --- PENCERE BOYUTLANDIRMA ---
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
-
-        // --- ÖDEME FONKSİYONU (Simülasyon) ---
-        function payWithSolana() {
-            alert("Sistem Hazırlanıyor!\nLütfen Solana cüzdan adresini hazırla.");
-        }
     </script>
 </body>
 </html>
