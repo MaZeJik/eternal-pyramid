@@ -3,160 +3,179 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THE ETERNAL NEXUS | SIGNATURE EDITION</title>
+    <title>THE ETERNAL NEXUS | GEMINI EDITION</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Montserrat:wght@100;400&display=swap');
-        body { margin: 0; background: #000; overflow: hidden; cursor: crosshair; }
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;900&family=Montserrat:wght@100;300;600&display=swap');
         
-        /* Premium UI Layer */
-        #ui {
+        body { margin: 0; background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%); overflow: hidden; cursor: crosshair; }
+        
+        /* Cinematic UI */
+        #ui-layer {
             position: absolute; width: 100%; height: 100%;
             display: flex; flex-direction: column; justify-content: space-between;
-            align-items: center; padding: 40px 0; z-index: 10; pointer-events: none;
+            align-items: center; padding: 50px 0; z-index: 100; pointer-events: none;
         }
 
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(212, 175, 55, 0.2);
-            padding: 20px 60px; text-align: center;
+        .main-display {
+            text-align: center; border: 1px solid rgba(212, 175, 55, 0.2);
+            padding: 30px 80px; backdrop-filter: blur(20px);
+            background: rgba(0,0,0,0.5); box-shadow: 0 0 100px rgba(0,0,0,0.8);
         }
 
-        #number {
-            font-family: 'Cinzel', serif; font-size: 4rem; color: #fff; margin: 0;
-            background: linear-gradient(to bottom, #fff 30%, #d4af37 100%);
+        #counter {
+            font-family: 'Cinzel', serif; font-size: clamp(2rem, 8vw, 5rem);
+            font-weight: 900; color: #fff; margin: 0; line-height: 1;
+            background: linear-gradient(to bottom, #fff 20%, #d4af37 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 30px rgba(212,175,55,0.4));
         }
 
-        .cta-btn {
-            pointer-events: auto; background: #d4af37; color: #000;
-            border: none; padding: 18px 60px; font-family: 'Cinzel';
-            font-size: 1rem; letter-spacing: 5px; cursor: pointer;
-            transition: 0.5s cubic-bezier(0.2, 1, 0.3, 1);
+        .tagline { color: #d4af37; letter-spacing: 12px; font-size: 0.8rem; margin-top: 15px; text-transform: uppercase; font-weight: 300; }
+
+        .btn-ascend {
+            pointer-events: auto; background: none; border: 1px solid #d4af37;
+            color: #d4af37; padding: 20px 60px; font-family: 'Cinzel';
+            font-size: 1.1rem; letter-spacing: 6px; cursor: pointer;
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
         }
-        .cta-btn:hover { letter-spacing: 10px; box-shadow: 0 0 50px #d4af37; transform: scale(1.05); }
+        .btn-ascend:hover { background: #d4af37; color: #000; box-shadow: 0 0 80px #d4af37; transform: scale(1.1); }
     </style>
 </head>
 <body>
 
-<div id="ui">
-    <div class="glass-panel">
-        <h1 id="number">7,984,102,540</h1>
-        <div style="color:#d4af37; letter-spacing:8px; font-size:0.7rem; margin-top:10px;">HUMANITY CORE INDEX</div>
+<div id="ui-layer">
+    <div class="main-display">
+        <h1 id="counter">7,984,102,540</h1>
+        <div class="tagline">The Collective Soul Index</div>
     </div>
-    <button class="cta-btn" onclick="alert('Ascension sequence locked.')">BECOME ETERNAL</button>
+    <button class="btn-ascend" onclick="initiateAscension()">ASCEND TO ETERNITY</button>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.set(0, 3, 22);
+    scene.fog = new THREE.FogExp2(0x000000, 0.02);
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 4, 25);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
     document.body.appendChild(renderer.domElement);
 
-    // --- KOZMİK DERİNLİK (Nebula Etkisi) ---
+    // --- COSMOS DESIGN ---
     const starGeo = new THREE.BufferGeometry();
-    const starPos = new Float32Array(8000 * 3);
-    for(let i=0; i<24000; i++) starPos[i] = (Math.random()-0.5)*200;
+    const starCount = 10000;
+    const starPos = new Float32Array(starCount * 3);
+    for(let i=0; i<starCount*3; i++) starPos[i] = (Math.random()-0.5)*250;
     starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
-    const stars = new THREE.Points(starGeo, new THREE.PointsMaterial({ size: 0.08, color: 0xd4af37, transparent: true, opacity: 0.4 }));
+    const stars = new THREE.Points(starGeo, new THREE.PointsMaterial({ size: 0.1, color: 0xd4af37, transparent: true, opacity: 0.6 }));
     scene.add(stars);
 
-    // --- PİRAMİT: GERÇEKÇİ KİTLE ---
+    // --- THE PYRAMID (ANCIENT STONE MEETS DIGITAL) ---
     const pyramidGroup = new THREE.Group();
     scene.add(pyramidGroup);
 
-    const stoneMat = new THREE.MeshStandardMaterial({ 
-        color: 0x3d2b1f, roughness: 0.8, metalness: 0.2,
-        flatShading: true // Taş blokları hissi verir
+    // Gerçekçi doku için özel malzeme
+    const stoneMaterial = new THREE.MeshStandardMaterial({ 
+        color: 0x4a3728, roughness: 0.9, metalness: 0.2, flatShading: false
     });
-    const pyramidBody = new THREE.Mesh(new THREE.ConeGeometry(7, 10, 4), stoneMat);
-    pyramidGroup.add(pyramidBody);
+    const pyramid = new THREE.Mesh(new THREE.ConeGeometry(8, 11, 4), stoneMaterial);
+    pyramidGroup.add(pyramid);
 
-    // --- ALTIN ZİRVE (Soru İşareti Değil, Bir Enerji Kaynağı) ---
-    const qCanvas = document.createElement('canvas');
-    qCanvas.width = 512; qCanvas.height = 512;
-    const qCtx = qCanvas.getContext('2d');
-    qCtx.font = "bold 400px 'Cinzel'";
-    qCtx.fillStyle = "#fff"; qCtx.textAlign = "center"; qCtx.textBaseline = "middle";
-    qCtx.shadowColor = "#d4af37"; qCtx.shadowBlur = 40;
-    qCtx.fillText("?", 256, 256);
-    
-    const qSprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(qCanvas) }));
-    qSprite.position.y = 6.5; qSprite.scale.set(4, 4, 1);
-    pyramidGroup.add(qSprite);
+    // --- GOLDEN CAPSTONE (The Soru İşareti) ---
+    const qLabel = createTextLabel("?");
+    qLabel.position.y = 7;
+    pyramidGroup.add(qLabel);
 
-    // --- YAŞAYAN YÜZLER (PARTICLE SİSTEMİ) ---
-    // Fotoğrafları piramidin etrafında dönen ruhlar gibi yapıyoruz (Donma yapmaz!)
-    const faceCount = 60;
-    const faces = [];
-    for(let i=0; i<faceCount; i++) {
-        const can = document.createElement('canvas'); can.width=128; can.height=128;
+    function createTextLabel(text) {
+        const can = document.createElement('canvas'); can.width=512; can.height=512;
         const cx = can.getContext('2d');
+        cx.font = "bold 400px 'Cinzel'"; cx.fillStyle = "#fff";
+        cx.textAlign = "center"; cx.textBaseline = "middle";
+        cx.shadowColor = "#d4af37"; cx.shadowBlur = 40;
+        cx.fillText(text, 256, 256);
         const tex = new THREE.CanvasTexture(can);
-        const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, opacity: 0.7, side: THREE.DoubleSide });
-        const plane = new THREE.Mesh(new THREE.PlaneGeometry(0.7, 0.7), mat);
+        const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true }));
+        sprite.scale.set(4.5, 4.5, 1);
+        return sprite;
+    }
+
+    // --- THE HUMAN SWARM (Yaşayan Yüzler) ---
+    const faceCount = 80;
+    const swarm = [];
+    for(let i=0; i<faceCount; i++) {
+        const faceCanvas = document.createElement('canvas'); faceCanvas.width=128; faceCanvas.height=128;
+        const faceCtx = faceCanvas.getContext('2d');
+        const faceTex = new THREE.CanvasTexture(faceCanvas);
+        const faceMat = new THREE.MeshBasicMaterial({ map: faceTex, transparent: true, opacity: 0.6, side: THREE.DoubleSide });
+        const plane = new THREE.Mesh(new THREE.PlaneGeometry(0.8, 0.8), faceMat);
         
         const img = new Image();
         img.crossOrigin = "anonymous";
-        img.src = `https://i.pravatar.cc/100?u=${Math.random()}`;
+        img.src = `https://i.pravatar.cc/100?u=${i + Math.random()}`;
         img.onload = () => {
-            cx.filter = 'grayscale(100%) contrast(1.5)';
-            cx.drawImage(img, 0, 0, 128, 128);
-            tex.needsUpdate = true;
+            faceCtx.filter = 'grayscale(100%) contrast(1.2) brightness(0.8)';
+            faceCtx.drawImage(img, 0, 0, 128, 128);
+            faceTex.needsUpdate = true;
         };
 
-        // Başlangıç pozisyonları (Piramit etrafında halka şeklinde)
-        const angle = (i / faceCount) * Math.PI * 2;
-        const radius = 8 + Math.random() * 2;
-        plane.position.set(Math.cos(angle)*radius, (Math.random()*6)-3, Math.sin(angle)*radius);
+        // Başlangıç pozisyonu (Piramit etrafında spiral)
+        const radius = 9 + Math.random() * 3;
+        const angle = Math.random() * Math.PI * 2;
+        plane.position.set(Math.cos(angle)*radius, (Math.random()*8)-4, Math.sin(angle)*radius);
         
         scene.add(plane);
-        faces.push({ mesh: plane, angle: angle, speed: 0.002 + Math.random()*0.005 });
+        swarm.push({ mesh: plane, angle: angle, radius: radius, speed: 0.001 + Math.random()*0.003, offset: Math.random()*100 });
     }
 
-    // IŞIKLANDIRMA (Sinematik)
-    const pLight = new THREE.PointLight(0xd4af37, 2, 50);
-    pLight.position.set(0, 8, 5);
+    // --- LIGHTING ---
+    const pLight = new THREE.PointLight(0xd4af37, 3, 60);
+    pLight.position.set(0, 10, 5);
     scene.add(pLight);
-    scene.add(new THREE.AmbientLight(0x222222));
+    scene.add(new THREE.AmbientLight(0x111111));
 
-    // INTERACTION
+    // --- CONTROLS & ANIMATION ---
     let mouseX = 0, mouseY = 0;
     window.addEventListener('mousemove', (e) => {
-        mouseX = (e.clientX - window.innerWidth/2) * 0.0005;
-        mouseY = (e.clientY - window.innerHeight/2) * 0.0005;
+        mouseX = (e.clientX - window.innerWidth/2) * 0.0003;
+        mouseY = (e.clientY - window.innerHeight/2) * 0.0003;
     });
 
-    let count = 7984102540;
+    let countVal = 7984102540;
     function animate() {
         requestAnimationFrame(animate);
         
-        pyramidGroup.rotation.y += 0.002;
-        pyramidGroup.rotation.y += mouseX;
+        pyramidGroup.rotation.y += 0.003 + mouseX;
         pyramidGroup.rotation.x += mouseY;
 
-        // Yüzlerin Dansı (Piramit etrafında dönerler)
-        faces.forEach(f => {
+        // Swarm Animation (Yüzlerin akışı)
+        swarm.forEach(f => {
             f.angle += f.speed;
-            f.mesh.position.x = Math.cos(f.angle) * 9;
-            f.mesh.position.z = Math.sin(f.angle) * 9;
-            f.mesh.lookAt(0, 0, 0);
+            f.mesh.position.x = Math.cos(f.angle) * f.radius;
+            f.mesh.position.z = Math.sin(f.angle) * f.radius;
+            f.mesh.position.y += Math.sin(Date.now()*0.001 + f.offset)*0.005;
+            f.mesh.lookAt(camera.position); // Yüzler her zaman sana bakar
         });
 
         stars.rotation.y += 0.0001;
-        qSprite.position.y = 6.5 + Math.sin(Date.now()*0.002)*0.2;
+        qLabel.position.y = 7 + Math.sin(Date.now()*0.0015)*0.25;
 
-        count += Math.random() > 0.9 ? 1 : 0;
-        document.getElementById('number').innerText = count.toLocaleString('en-US');
+        // Canlı sayaç
+        if(Math.random() > 0.8) {
+            countVal += 1;
+            document.getElementById('counter').innerText = countVal.toLocaleString('en-US');
+        }
 
         renderer.render(scene, camera);
     }
     animate();
+
+    function initiateAscension() {
+        alert("Preparing your digital DNA for eternity...");
+    }
 
     window.addEventListener('resize', () => {
         camera.aspect = window.innerWidth / window.innerHeight;
