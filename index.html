@@ -2,135 +2,111 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>THE ETERNAL NEXUS | FINAL</title>
+    <title>THE ETERNAL NEXUS</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;900&display=swap');
-        body { margin: 0; background: #000; overflow: hidden; cursor: crosshair; }
-        
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@900&display=swap');
+        body { margin: 0; background: #000; overflow: hidden; cursor: none; }
         #ui {
             position: absolute; inset: 0; display: flex; flex-direction: column;
-            justify-content: space-between; align-items: center; padding: 8vh;
+            justify-content: space-between; align-items: center; padding: 60px;
             z-index: 100; pointer-events: none;
         }
-
         #counter {
-            font-family: 'Cinzel', serif; font-size: clamp(3rem, 10vw, 8rem);
-            color: #fff; margin: 0; letter-spacing: -5px;
-            background: linear-gradient(180deg, #ffffff 30%, #d4af37 100%);
+            font-family: 'Cinzel', serif; font-size: 8vw; color: #fff;
+            background: linear-gradient(180deg, #fff, #d4af37);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 50px rgba(212,175,55,0.4));
+            filter: drop-shadow(0 0 30px rgba(212,175,55,0.3)); margin: 0;
         }
-
-        .label { color: #d4af37; letter-spacing: 20px; font-size: 0.7rem; text-transform: uppercase; opacity: 0.6; font-family: 'Cinzel'; }
     </style>
 </head>
 <body>
 
 <div id="ui">
-    <div style="text-align:center">
-        <h1 id="counter">8,000,000,000</h1>
-        <div class="label">Living Relics</div>
-    </div>
-    <div class="label" style="letter-spacing: 10px; opacity: 0.3;">The Eternal Ascension</div>
+    <h1 id="counter">8,000,000,000</h1>
+    <div style="color:#d4af37; font-family:Cinzel; letter-spacing:15px; font-size:0.6rem; opacity:0.4;">FINAL ASCENSION</div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(22, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.set(0, 0, 40);
+    const camera = new THREE.PerspectiveCamera(20, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 0, 45);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.6;
+    renderer.toneMapping = THREE.ReinhardToneMapping;
+    renderer.toneMappingExposure = 2.0;
     document.body.appendChild(renderer.domElement);
 
     const anchor = new THREE.Group();
     scene.add(anchor);
 
-    // --- PROCEDURAL STONE TEXTURE ---
+    // --- GERÇEK TAŞ DOKUSU (BUMP MAP) ---
     const canvas = document.createElement('canvas');
     canvas.width = 1024; canvas.height = 1024;
     const ctx = canvas.getContext('2d');
-    ctx.fillStyle = '#111'; ctx.fillRect(0,0,1024,1024);
-    for(let i=0; i<50000; i++) {
-        ctx.fillStyle = `rgba(255,255,255,${Math.random()*0.08})`;
-        ctx.fillRect(Math.random()*1024, Math.random()*1024, 2, 2);
+    ctx.fillStyle = '#0a0a0a'; ctx.fillRect(0,0,1024,1024);
+    for(let i=0; i<100000; i++) {
+        ctx.fillStyle = `rgba(255,255,255,${Math.random()*0.1})`;
+        ctx.fillRect(Math.random()*1024, Math.random()*1024, 1.5, 1.5);
     }
     const stoneTex = new THREE.CanvasTexture(canvas);
     stoneTex.wrapS = stoneTex.wrapT = THREE.RepeatWrapping;
 
-    // --- THE MONOLITH ---
+    // --- MONOLİT (PİRAMİT) ---
     const pyramidMat = new THREE.MeshStandardMaterial({ 
-        map: stoneTex, bumpMap: stoneTex, bumpScale: 0.4,
-        color: 0x1a1a1a, roughness: 0.9, metalness: 0.1
+        color: 0x111111, bumpMap: stoneTex, bumpScale: 0.8, roughness: 1, metalness: 0 
     });
-    const monolith = new THREE.Mesh(new THREE.ConeGeometry(8, 12, 4), pyramidMat);
+    const monolith = new THREE.Mesh(new THREE.ConeGeometry(10, 15, 4), pyramidMat);
     anchor.add(monolith);
 
-    // --- RELIEF FACES (KAZINMIŞ YÜZLER) ---
-    const faces = [];
+    // --- RELIEF (KAZINMIŞ YÜZLER) ---
     const loader = new THREE.TextureLoader();
-    for(let i=0; i<100; i++) {
-        const side = i % 4;
-        const row = Math.floor(i / 10);
+    for(let i=0; i<120; i++) {
+        const side = i % 4, row = Math.floor(i / 10);
         const angle = side * (Math.PI / 2);
-        const radius = 6.45 - (row * 0.48);
+        const radius = 8.05 - (row * 0.6);
         
-        const tex = loader.load(`https://i.pravatar.cc/100?u=${i + 150}`);
+        const faceTex = loader.load(`https://i.pravatar.cc/100?u=${i+200}`);
         const faceMat = new THREE.MeshStandardMaterial({ 
-            map: tex, bumpMap: tex, bumpScale: -0.25,
-            transparent: true, opacity: 0.5, color: 0x444,
-            blending: THREE.MultiplyBlending 
+            map: faceTex, bumpMap: faceTex, bumpScale: -0.4, // İçeri kazıma
+            transparent: true, opacity: 0.6, color: 0x333, blending: THREE.MultiplyBlending 
         });
-        
-        const plane = new THREE.Mesh(new THREE.PlaneGeometry(0.8, 0.8), faceMat);
-        plane.position.set(Math.cos(angle)*radius, (row * 1.0) - 5, Math.sin(angle)*radius);
-        plane.rotation.y = angle;
-        anchor.add(plane);
+        const p = new THREE.Mesh(new THREE.PlaneGeometry(0.8, 0.8), faceMat);
+        p.position.set(Math.cos(angle)*radius, (row * 1.1) - 6.5, Math.sin(angle)*radius);
+        p.rotation.y = angle;
+        anchor.add(p);
     }
 
-    // --- GOLDEN APEX ---
+    // --- ZİRVE: ALTIN SORU İŞARETİ ---
     const qCan = document.createElement('canvas'); qCan.width=512; qCan.height=512;
     const qCtx = qCan.getContext('2d');
-    qCtx.font = "900 400px 'Cinzel'"; qCtx.fillStyle = "#fff"; qCtx.textAlign="center"; qCtx.textBaseline="middle";
-    qCtx.shadowColor = "#d4af37"; qCtx.shadowBlur = 50; qCtx.fillText("?", 256, 256);
-    const qSprite = new THREE.Sprite(new THREE.SpriteMaterial({ 
-        map: new THREE.CanvasTexture(qCan), blending: THREE.AdditiveBlending 
-    }));
-    qSprite.position.y = 7.5; qSprite.scale.set(6, 6, 1);
+    qCtx.font = "900 400px 'Cinzel'"; qCtx.fillStyle="#fff"; qCtx.textAlign="center"; qCtx.textBaseline="middle";
+    qCtx.shadowColor="#d4af37"; qCtx.shadowBlur=60; qCtx.fillText("?", 256, 256);
+    const qSprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(qCan), blending: THREE.AdditiveBlending }));
+    qSprite.position.y = 9; qSprite.scale.set(7, 7, 1);
     anchor.add(qSprite);
 
-    // --- DIVINE LIGHTING ---
-    const sun = new THREE.DirectionalLight(0xd4af37, 2.5);
-    sun.position.set(10, 10, 10);
-    scene.add(sun);
-    
-    const fill = new THREE.PointLight(0xffffff, 0.5, 50);
-    fill.position.set(-10, 5, 5);
-    scene.add(fill);
+    // --- SERT IŞIK (MAUSE TAKİPLİ MEŞALE) ---
+    const torch = new THREE.PointLight(0xd4af37, 8, 60);
+    scene.add(torch);
 
-    // --- FINAL PHYSICS ---
+    // --- HANTAL HAREKET ---
     let tX = 0, tY = 0, cX = 0, cY = 0;
     window.addEventListener('mousemove', (e) => {
-        tX = (e.clientX - window.innerWidth/2) * 0.0004;
-        tY = (e.clientY - window.innerHeight/2) * 0.0004;
+        tX = (e.clientX - window.innerWidth/2) * 0.0003;
+        tY = (e.clientY - window.innerHeight/2) * 0.0003;
+        // Işığı fareye bağla
+        torch.position.x = (e.clientX / window.innerWidth - 0.5) * 40;
+        torch.position.y = -(e.clientY / window.innerHeight - 0.5) * 40;
+        torch.position.z = 15;
     });
 
     function animate() {
         requestAnimationFrame(animate);
-        cX += (tX - cX) * 0.05; // Smooth inertia
-        cY += (tY - cY) * 0.05;
-        
-        anchor.rotation.y += 0.0015 + cX;
+        cX += (tX - cX) * 0.02; cY += (tY - cY) * 0.02;
+        anchor.rotation.y += 0.001 + cX;
         anchor.rotation.x += (cY - anchor.rotation.x) * 0.05;
-        
-        qSprite.position.y = 7.5 + Math.sin(Date.now()*0.002)*0.2;
         renderer.render(scene, camera);
     }
     animate();
-</script>
-</body>
-</html>
