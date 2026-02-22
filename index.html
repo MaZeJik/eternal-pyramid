@@ -2,137 +2,86 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>THE SINGULARITY</title>
+    <title>NEXUS | BEYOND THE LIMIT</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@900&family=Montserrat:wght@100&display=swap');
         body { margin: 0; background: #000; overflow: hidden; cursor: none; }
-        #ui {
+        
+        #ui-layer {
             position: absolute; width: 100%; height: 100%;
-            display: flex; flex-direction: column; justify-content: center;
-            align-items: center; z-index: 100; pointer-events: none;
+            display: flex; flex-direction: column; justify-content: space-between;
+            align-items: center; padding: 40px; z-index: 1000; pointer-events: none;
         }
-        #counter {
-            font-family: 'Cinzel', serif; font-size: 9vw; color: #fff;
-            background: linear-gradient(to bottom, #fff 20%, #d4af37 80%);
+
+        #counter-master {
+            font-family: 'Cinzel', serif; font-size: 10vw; color: #fff;
+            background: linear-gradient(180deg, #fff 20%, #d4af37 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 80px rgba(212,175,55,0.5));
-            letter-spacing: -5px;
+            filter: drop-shadow(0 0 100px rgba(212,175,55,0.6));
+            letter-spacing: -8px; line-height: 0.8;
         }
-        #custom-cursor {
-            position: fixed; width: 20px; height: 20px; border: 1px solid #d4af37;
-            border-radius: 50%; pointer-events: none; transform: translate(-50%, -50%);
-            transition: width 0.3s, height 0.3s; z-index: 1000;
+
+        .status-bar {
+            width: 300px; height: 1px; background: rgba(212,175,55,0.3);
+            position: relative; margin-top: 20px;
+        }
+        .status-fill {
+            width: 80%; height: 100%; background: #d4af37;
+            box-shadow: 0 0 20px #d4af37;
         }
     </style>
 </head>
 <body>
 
-<div id="custom-cursor"></div>
-<div id="ui">
-    <h1 id="counter">8,000,000,000</h1>
-    <div style="color:rgba(212,175,55,0.6); font-family:Montserrat; letter-spacing:15px; font-size:0.7rem;">CONSCIOUSNESS CORE</div>
+<div id="ui-layer">
+    <div style="text-align: center;">
+        <h1 id="counter-master">8,000,000,000</h1>
+        <div class="status-bar"><div class="status-fill"></div></div>
+        <div style="color:#d4af37; font-family:Cinzel; letter-spacing:10px; font-size:0.6rem; margin-top:10px;">QUANTUM ASCENSION ACTIVE</div>
+    </div>
+    <div style="color:rgba(255,255,255,0.2); font-family:Montserrat; letter-spacing:20px; font-size:0.5rem;">LIMITLESS / BEYOND</div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(15, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.set(0, 0, 50);
+    const camera = new THREE.PerspectiveCamera(12, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 0, 60);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.2;
+    renderer.toneMappingExposure = 1.5;
     document.body.appendChild(renderer.domElement);
 
-    // --- MAGMA & TAŞ GRUBU ---
-    const core = new THREE.Group();
-    scene.add(core);
+    const masterGroup = new THREE.Group();
+    scene.add(masterGroup);
 
-    // Piramit Gövdesi (Ultra-Mat Brütalist Taş)
-    const geometry = new THREE.ConeGeometry(8, 12, 4);
-    const material = new THREE.MeshStandardMaterial({ 
-        color: 0x050505, roughness: 1, metalness: 0.1, flatShading: true 
+    // --- PARÇALANMIŞ MONOLİT (Kinetik Parçalar) ---
+    const pyramidMat = new THREE.MeshStandardMaterial({ 
+        color: 0x050505, roughness: 0.1, metalness: 1, flatShading: true 
     });
-    const monolith = new THREE.Mesh(geometry, material);
-    core.add(monolith);
 
-    // Altın Çatlaklar (Wireframe Glow)
-    const wireframe = new THREE.Mesh(
-        geometry,
-        new THREE.MeshBasicMaterial({ color: 0xd4af37, wireframe: true, transparent: true, opacity: 0.15 })
-    );
-    core.add(wireframe);
-
-    // --- RÖLYEF SİSTEMİ (Derinlikli Kazıma) ---
-    const faces = [];
-    const loader = new THREE.TextureLoader();
-    for(let i=0; i<120; i++) {
-        const side = i % 4;
-        const row = Math.floor(i / 15);
-        const angle = side * (Math.PI / 2);
-        const radius = 7.1 - (row * 0.55);
-        
-        const tex = loader.load(`https://i.pravatar.cc/100?u=${i}`);
-        const faceMat = new THREE.MeshStandardMaterial({ 
-            map: tex, transparent: true, opacity: 0.4,
-            emissive: 0xd4af37, emissiveIntensity: 0, // Işık sızması için
-            blending: THREE.AdditiveBlending
-        });
-        const plane = new THREE.Mesh(new THREE.PlaneGeometry(0.65, 0.65), faceMat);
-        plane.position.set(Math.cos(angle)*radius, (row * 1.1) - 5.5, Math.sin(angle)*radius);
-        plane.rotation.y = angle;
-        core.add(plane);
-        faces.push({mesh: plane, originalY: plane.position.y});
+    const segments = [];
+    for(let i=0; i<4; i++) { // Piramidi 4 ana dilime bölüyoruz
+        const geo = new THREE.ConeGeometry(8, 3, 4, 1, false, (i * Math.PI)/2, Math.PI/2);
+        const part = new THREE.Mesh(geo, pyramidMat);
+        part.position.y = (i * 3) - 4.5;
+        masterGroup.add(part);
+        segments.push({ mesh: part, offset: i * 0.5 });
     }
 
-    // --- IŞIKLANDIRMA (Sinematik Dram) ---
-    const topLight = new THREE.PointLight(0xd4af37, 10, 50);
-    topLight.position.set(0, 15, 5);
+    // --- VERİ BULUTU (8 Milyar İnsan Tozu) ---
+    const particlesGeo = new THREE.BufferGeometry();
+    const pCount = 20000;
+    const posArray = new Float32Array(pCount * 3);
+    for(let i=0; i<pCount*3; i++) posArray[i] = (Math.random() - 0.5) * 100;
+    particlesGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+    const particlesMat = new THREE.PointsMaterial({ size: 0.02, color: 0xd4af37, transparent: true, opacity: 0.4 });
+    const particleSystem = new THREE.Points(particlesGeo, particlesMat);
+    scene.add(particleSystem);
+
+    // --- IŞIK (Karanlığı Delen Altın) ---
+    const topLight = new THREE.RectAreaLight(0xd4af37, 20, 10, 10);
+    topLight.position.set(0, 20, 0);
     scene.add(topLight);
-
-    const mouseLight = new THREE.PointLight(0xffffff, 2, 30);
-    scene.add(mouseLight);
-
-    // --- FİZİK VE ETKİLEŞİM ---
-    let mouse = new THREE.Vector2();
-    let targetRotation = new THREE.Vector2();
-    let currentRotation = new THREE.Vector2();
-
-    window.addEventListener('mousemove', (e) => {
-        mouse.x = (e.clientX / window.innerWidth - 0.5) * 2;
-        mouse.y = -(e.clientY / window.innerHeight - 0.5) * 2;
-        
-        document.getElementById('custom-cursor').style.left = e.clientX + 'px';
-        document.getElementById('custom-cursor').style.top = e.clientY + 'px';
-        
-        mouseLight.position.x = mouse.x * 20;
-        mouseLight.position.y = mouse.y * 20;
-    });
-
-    function animate() {
-        requestAnimationFrame(animate);
-        
-        // Kinematik İvme (Lerp)
-        targetRotation.x = mouse.y * 0.5;
-        targetRotation.y = mouse.x * 0.8;
-        
-        currentRotation.x += (targetRotation.x - currentRotation.x) * 0.02; // Ağırlık hissi
-        currentRotation.y += (targetRotation.y - currentRotation.y) * 0.02;
-        
-        core.rotation.x = currentRotation.x;
-        core.rotation.y += 0.002 + currentRotation.y * 0.1;
-
-        // Yüzlerin "Nefes Alan" Enerjisi
-        faces.forEach((f, i) => {
-            const pulse = Math.sin(Date.now() * 0.001 + i) * 0.5 + 0.5;
-            f.mesh.material.emissiveIntensity = pulse * 0.5;
-            f.mesh.position.y = f.originalY + pulse * 0.1; // Hafif yukarı-aşağı salınım
-        });
-
-        renderer.render(scene, camera);
-    }
-    animate();
-</script>
-</body>
-</html>
