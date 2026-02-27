@@ -2,120 +2,109 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>THE MONOLITH | FINAL</title>
+    <title>THE MONOLITH | ABSOLUTE FINAL</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@900&display=swap');
-        body { margin: 0; background: #000; overflow: hidden; cursor: crosshair; }
-        
+        body { margin: 0; background: #000; overflow: hidden; cursor: none; }
         #ui {
-            position: absolute; inset: 0; display: flex; flex-direction: column;
-            justify-content: flex-end; align-items: center; padding-bottom: 5vh;
-            z-index: 100; pointer-events: none;
+            position: absolute; inset: 0; display: flex; justify-content: center;
+            align-items: flex-end; padding-bottom: 5vh; z-index: 100; pointer-events: none;
         }
-
         #counter {
-            font-family: 'Cinzel', serif; font-size: clamp(4rem, 15vw, 10rem);
-            color: #fff; margin: 0; letter-spacing: -8px;
+            font-family: 'Cinzel', serif; font-size: 12vw; color: #fff;
             background: linear-gradient(180deg, #fff 40%, #d4af37 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 80px rgba(212,175,55,0.6));
-            opacity: 0.9;
-        }
-
-        /* Görüntüye analog bir derinlik katan kirlilik katmanı */
-        .grain {
-            position: fixed; inset: 0; z-index: 50; pointer-events: none;
-            background: url('https://media.giphy.com/media/oEI9uWUic9Zsc/giphy.gif');
-            opacity: 0.05; mix-blend-mode: overlay;
+            filter: drop-shadow(0 0 100px rgba(212,175,55,0.8));
+            opacity: 0.95; margin: 0; letter-spacing: -10px;
         }
     </style>
 </head>
 <body>
 
-<div class="grain"></div>
-<div id="ui">
-    <h1 id="counter">8,000,000,000</h1>
-    <div style="color:#d4af37; font-family:Cinzel; letter-spacing:20px; font-size:0.6rem; opacity:0.4; margin-bottom: 20px;">COLLECTIVE ASCENSION</div>
-</div>
+<div id="ui"><h1 id="counter">8,000,000,000</h1></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
     const scene = new THREE.Scene();
-    // Perspektifi çok daraltarak objeyi devleştiriyoruz (Lens compression)
-    const camera = new THREE.PerspectiveCamera(12, window.innerWidth / window.innerHeight, 1, 1000);
-    camera.position.set(0, 5, 80);
+    const camera = new THREE.PerspectiveCamera(15, window.innerWidth / window.innerHeight, 1, 1000);
+    camera.position.set(0, 0, 70);
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(window.devicePixelRatio);
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.8;
+    renderer.toneMappingExposure = 2.5; // Karanlığı yırtmak için pozlamayı artırdım
     document.body.appendChild(renderer.domElement);
 
     const anchor = new THREE.Group();
     scene.add(anchor);
 
-    // --- GERÇEK TAŞ DOKUSU VE RÖLYEFLER ---
-    // Taşın o ham, kirli dokusunu yaratıyoruz
+    // --- BRÜTALİST TAŞ DOKUSU ---
     const canvas = document.createElement('canvas'); canvas.width = 1024; canvas.height = 1024;
     const ctx = canvas.getContext('2d');
-    ctx.fillStyle = '#111'; ctx.fillRect(0,0,1024,1024);
-    for(let i=0; i<100000; i++) {
-        ctx.fillStyle = `rgba(255,255,255,${Math.random()*0.15})`;
+    ctx.fillStyle = '#0a0a0a'; ctx.fillRect(0,0,1024,1024);
+    for(let i=0; i<150000; i++) {
+        ctx.fillStyle = `rgba(255,255,255,${Math.random()*0.1})`;
         ctx.fillRect(Math.random()*1024, Math.random()*1024, 2, 2);
     }
     const stoneTex = new THREE.CanvasTexture(canvas);
 
-    // --- THE MONOLITH (PİRAMİT) ---
-    const pyramidGeo = new THREE.ConeGeometry(12, 18, 4);
+    // --- MONOLİT (KÜTLESEL PİRAMİT) ---
+    const pyramidGeo = new THREE.ConeGeometry(14, 22, 4);
     const pyramidMat = new THREE.MeshStandardMaterial({ 
-        color: 0x0a0a0a, bumpMap: stoneTex, bumpScale: 1.5, roughness: 1, metalness: 0.1 
+        color: 0x050505, bumpMap: stoneTex, bumpScale: 2.0, roughness: 1, metalness: 0.2
     });
     const monolith = new THREE.Mesh(pyramidGeo, pyramidMat);
-    monolith.position.y = 2; // Sayının üzerinde yükselsin
+    monolith.position.y = 5;
     anchor.add(monolith);
 
-    // --- KAZINMIŞ YÜZLER (RELIEFS) ---
+    // --- KAZINMIŞ YÜZLER (DERİN RÖLYEF) ---
     const loader = new THREE.TextureLoader();
-    for(let i=0; i<120; i++) {
-        const side = i % 4, row = Math.floor(i / 15);
+    for(let i=0; i<160; i++) {
+        const side = i % 4, row = Math.floor(i / 20);
         const angle = side * (Math.PI / 2);
-        const radius = 11.1 - (row * 0.85);
+        const radius = 13.5 - (row * 0.9);
         
-        const faceTex = loader.load(`https://i.pravatar.cc/100?u=${i+100}`);
+        const faceTex = loader.load(`https://i.pravatar.cc/100?u=${i+555}`);
         const faceMat = new THREE.MeshStandardMaterial({ 
-            map: faceTex, bumpMap: faceTex, bumpScale: -0.8,
-            transparent: true, opacity: 0.5, color: 0x222, blending: THREE.MultiplyBlending 
+            map: faceTex, bumpMap: faceTex, bumpScale: -1.0, // Derin oyma
+            transparent: true, opacity: 0.6, color: 0x222, blending: THREE.MultiplyBlending 
         });
-        const p = new THREE.Mesh(new THREE.PlaneGeometry(0.9, 0.9), faceMat);
-        p.position.set(Math.cos(angle)*radius, (row * 1.4) - 5, Math.sin(angle)*radius);
+        const p = new THREE.Mesh(new THREE.PlaneGeometry(1.2, 1.2), faceMat);
+        p.position.set(Math.cos(angle)*radius, (row * 1.6) - 9, Math.sin(angle)*radius);
         p.rotation.y = angle;
         anchor.add(p);
     }
 
-    // --- ZİRVEDEKİ IŞIK KAYNAĞI ---
-    const topLight = new THREE.PointLight(0xd4af37, 20, 100);
-    topLight.position.set(0, 15, 5);
+    // --- IŞIKLANDIRMA (Karanlığı Yırtan) ---
+    // Piramidi yukarıdan vuran ilahi altın ışık
+    const topLight = new THREE.SpotLight(0xd4af37, 50);
+    topLight.position.set(0, 40, 20);
+    topLight.angle = Math.PI / 6;
+    topLight.penumbra = 1;
     scene.add(topLight);
 
-    // Fareyi takip eden, taşın pürüzlerini ortaya çıkaran meşale
-    const torch = new THREE.PointLight(0xffffff, 2, 50);
+    // Alttan, sayının olduğu yerden yukarı sızan ışık
+    const bottomLight = new THREE.PointLight(0xd4af37, 15, 100);
+    bottomLight.position.set(0, -15, 10);
+    scene.add(bottomLight);
+
+    // Fareyi takip eden keşif ışığı
+    const torch = new THREE.PointLight(0xffffff, 3, 60);
     scene.add(torch);
 
-    // --- HANTAL VE MAĞRUR HAREKET ---
-    let targetX = 0, targetY = 0, currentX = 0, currentY = 0;
+    let tX = 0, tY = 0, cX = 0, cY = 0;
     window.addEventListener('mousemove', (e) => {
-        targetX = (e.clientX - window.innerWidth/2) * 0.0002;
-        targetY = (e.clientY - window.innerHeight/2) * 0.0002;
-        torch.position.set((e.clientX/window.innerWidth-0.5)*60, -(e.clientY/window.innerHeight-0.5)*60, 20);
+        tX = (e.clientX - window.innerWidth/2) * 0.0003;
+        tY = (e.clientY - window.innerHeight/2) * 0.0003;
+        torch.position.set((e.clientX/window.innerWidth-0.5)*70, -(e.clientY/window.innerHeight-0.5)*70, 25);
     });
 
     function animate() {
         requestAnimationFrame(animate);
-        currentX += (targetX - currentX) * 0.03; // Ağır ivme
-        currentY += (targetY - currentY) * 0.03;
-        anchor.rotation.y += 0.0015 + currentX;
-        anchor.rotation.x = currentY;
+        cX += (tX - cX) * 0.04;
+        cY += (tY - cY) * 0.04;
+        anchor.rotation.y += 0.001 + cX;
+        anchor.rotation.x = cY;
         renderer.render(scene, camera);
     }
     animate();
