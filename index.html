@@ -2,20 +2,19 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>THE ETERNAL NEXUS</title>
+    <title>THE MONOLITH</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@900&display=swap');
-        body { margin: 0; background: #000; overflow: hidden; cursor: none; }
+        body { margin: 0; background: #010101; overflow: hidden; cursor: crosshair; }
         #ui {
             position: absolute; inset: 0; display: flex; flex-direction: column;
-            justify-content: space-between; align-items: center; padding: 60px;
-            z-index: 100; pointer-events: none;
+            justify-content: center; align-items: center; z-index: 100; pointer-events: none;
         }
         #counter {
-            font-family: 'Cinzel', serif; font-size: 8vw; color: #fff;
-            background: linear-gradient(180deg, #fff, #d4af37);
+            font-family: 'Cinzel', serif; font-size: 10vw; color: #fff;
+            filter: drop-shadow(0 0 40px rgba(0,0,0,1)); margin: 0;
+            background: linear-gradient(to bottom, #fff 20%, #d4af37 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 30px rgba(212,175,55,0.3)); margin: 0;
         }
     </style>
 </head>
@@ -23,90 +22,86 @@
 
 <div id="ui">
     <h1 id="counter">8,000,000,000</h1>
-    <div style="color:#d4af37; font-family:Cinzel; letter-spacing:15px; font-size:0.6rem; opacity:0.4;">FINAL ASCENSION</div>
+    <div style="color:rgba(212,175,55,0.4); font-family:Cinzel; letter-spacing:20px; font-size:0.7rem;">COLLECTIVE SOUL</div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(20, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.set(0, 0, 45);
+    const camera = new THREE.PerspectiveCamera(15, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 0, 50);
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    const renderer = new THREE.WebGLRenderer({ antialias: true, stencil: false });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.toneMapping = THREE.ReinhardToneMapping;
-    renderer.toneMappingExposure = 2.0;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.2;
     document.body.appendChild(renderer.domElement);
 
-    const anchor = new THREE.Group();
-    scene.add(anchor);
+    const group = new THREE.Group();
+    scene.add(group);
 
-    // --- GERÇEK TAŞ DOKUSU (BUMP MAP) ---
+    // --- HAM TAŞ DOKUSU ---
     const canvas = document.createElement('canvas');
     canvas.width = 1024; canvas.height = 1024;
     const ctx = canvas.getContext('2d');
-    ctx.fillStyle = '#0a0a0a'; ctx.fillRect(0,0,1024,1024);
-    for(let i=0; i<100000; i++) {
-        ctx.fillStyle = `rgba(255,255,255,${Math.random()*0.1})`;
-        ctx.fillRect(Math.random()*1024, Math.random()*1024, 1.5, 1.5);
+    ctx.fillStyle = '#050505'; ctx.fillRect(0,0,1024,1024);
+    for(let i=0; i<80000; i++) {
+        ctx.fillStyle = `rgba(255,255,255,${Math.random()*0.05})`;
+        ctx.fillRect(Math.random()*1024, Math.random()*1024, 1, 1);
     }
     const stoneTex = new THREE.CanvasTexture(canvas);
-    stoneTex.wrapS = stoneTex.wrapT = THREE.RepeatWrapping;
 
-    // --- MONOLİT (PİRAMİT) ---
+    // --- MONOLİT: OBSİDİEN PİRAMİT ---
+    const pyramidGeo = new THREE.ConeGeometry(8, 12, 4);
     const pyramidMat = new THREE.MeshStandardMaterial({ 
-        color: 0x111111, bumpMap: stoneTex, bumpScale: 0.8, roughness: 1, metalness: 0 
+        color: 0x0a0a0a, bumpMap: stoneTex, bumpScale: 0.5, roughness: 1, metalness: 0 
     });
-    const monolith = new THREE.Mesh(new THREE.ConeGeometry(10, 15, 4), pyramidMat);
-    anchor.add(monolith);
+    const monolith = new THREE.Mesh(pyramidGeo, pyramidMat);
+    group.add(monolith);
 
-    // --- RELIEF (KAZINMIŞ YÜZLER) ---
+    // --- RELIEF FACES (TAŞA KAZINMIŞ) ---
     const loader = new THREE.TextureLoader();
-    for(let i=0; i<120; i++) {
-        const side = i % 4, row = Math.floor(i / 10);
+    for(let i=0; i<150; i++) {
+        const side = i % 4, row = Math.floor(i / 15);
         const angle = side * (Math.PI / 2);
-        const radius = 8.05 - (row * 0.6);
+        const radius = 7.1 - (row * 0.5);
         
-        const faceTex = loader.load(`https://i.pravatar.cc/100?u=${i+200}`);
+        const faceTex = loader.load(`https://i.pravatar.cc/100?u=${i+300}`);
         const faceMat = new THREE.MeshStandardMaterial({ 
-            map: faceTex, bumpMap: faceTex, bumpScale: -0.4, // İçeri kazıma
-            transparent: true, opacity: 0.6, color: 0x333, blending: THREE.MultiplyBlending 
+            map: faceTex, bumpMap: faceTex, bumpScale: -0.3,
+            transparent: true, opacity: 0.4, color: 0x222, blending: THREE.MultiplyBlending 
         });
-        const p = new THREE.Mesh(new THREE.PlaneGeometry(0.8, 0.8), faceMat);
-        p.position.set(Math.cos(angle)*radius, (row * 1.1) - 6.5, Math.sin(angle)*radius);
+        const p = new THREE.Mesh(new THREE.PlaneGeometry(0.7, 0.7), faceMat);
+        p.position.set(Math.cos(angle)*radius, (row * 1.1) - 5.5, Math.sin(angle)*radius);
         p.rotation.y = angle;
-        anchor.add(p);
+        group.add(p);
     }
 
-    // --- ZİRVE: ALTIN SORU İŞARETİ ---
+    // --- ZİRVEDEKİ SORU ---
     const qCan = document.createElement('canvas'); qCan.width=512; qCan.height=512;
     const qCtx = qCan.getContext('2d');
-    qCtx.font = "900 400px 'Cinzel'"; qCtx.fillStyle="#fff"; qCtx.textAlign="center"; qCtx.textBaseline="middle";
-    qCtx.shadowColor="#d4af37"; qCtx.shadowBlur=60; qCtx.fillText("?", 256, 256);
+    qCtx.font = "bold 350px 'Cinzel'"; qCtx.fillStyle="#fff"; qCtx.textAlign="center"; qCtx.textBaseline="middle";
+    qCtx.shadowColor="#d4af37"; qCtx.shadowBlur=80; qCtx.fillText("?", 256, 256);
     const qSprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(qCan), blending: THREE.AdditiveBlending }));
-    qSprite.position.y = 9; qSprite.scale.set(7, 7, 1);
-    anchor.add(qSprite);
+    qSprite.position.y = 8; qSprite.scale.set(6, 6, 1);
+    group.add(qSprite);
 
-    // --- SERT IŞIK (MAUSE TAKİPLİ MEŞALE) ---
-    const torch = new THREE.PointLight(0xd4af37, 8, 60);
+    // --- TEKİL MEŞALE IŞIĞI ---
+    const torch = new THREE.PointLight(0xd4af37, 10, 60);
     scene.add(torch);
 
-    // --- HANTAL HAREKET ---
-    let tX = 0, tY = 0, cX = 0, cY = 0;
+    // --- AĞIR FİZİK ---
+    let mouseX = 0, mouseY = 0;
     window.addEventListener('mousemove', (e) => {
-        tX = (e.clientX - window.innerWidth/2) * 0.0003;
-        tY = (e.clientY - window.innerHeight/2) * 0.0003;
-        // Işığı fareye bağla
-        torch.position.x = (e.clientX / window.innerWidth - 0.5) * 40;
-        torch.position.y = -(e.clientY / window.innerHeight - 0.5) * 40;
-        torch.position.z = 15;
+        mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+        mouseY = -(e.clientY / window.innerHeight - 0.5) * 2;
+        torch.position.set(mouseX * 25, mouseY * 25, 15);
     });
 
     function animate() {
         requestAnimationFrame(animate);
-        cX += (tX - cX) * 0.02; cY += (tY - cY) * 0.02;
-        anchor.rotation.y += 0.001 + cX;
-        anchor.rotation.x += (cY - anchor.rotation.x) * 0.05;
+        group.rotation.y += 0.001 + mouseX * 0.02;
+        group.rotation.x += (mouseY * 0.1 - group.rotation.x) * 0.05;
         renderer.render(scene, camera);
     }
     animate();
